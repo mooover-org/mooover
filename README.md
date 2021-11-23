@@ -25,7 +25,7 @@ Join communities, take part in fun events and challenges that motivate you to be
 - Challenges participating (opt out/in)
 - Profile modifications
 - App settings
-- See Mv(?) points
+- See Mv(?) points (possibly used for vouchers and other things irl)
 - See achievements
 - Events participating
 - Friends adding/removing/chatting
@@ -53,31 +53,20 @@ Join communities, take part in fun events and challenges that motivate you to be
 	- meteo stuff
 	- placing points of interest (reinforcement learning with user feedback)
 	- point of interest photo validation (image recogniton)
-- Concepts:
-	- User
-	- Community
-	- Friend
-	- Challenge
-	- Event
-	- Message
-	- Achievement
-	- Route
-	- Point of interest
-	- Steps
-	- Activity
 - Python server + database ?
 - Android + iOS platforms in Flutter
 
-### User:
+### Entities
 
-- Name
-- User name
-- Birth date
-- Fitness
-- Email
-- Phone number
-- Friends
-- Communities
+1. User:
+	- Name
+	- User name
+	- Birth date
+	- Fitness
+	- Email
+	- Phone number
+	- Friends
+	- Communities
 
 ## Flow
 
@@ -92,4 +81,8 @@ Join communities, take part in fun events and challenges that motivate you to be
 		- Comm. chat
 		- Map page
 	- Events page
+
+## Bachelor project documentation (useful stuff)
+
+- Obesity problems
 
