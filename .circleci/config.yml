@@ -1,0 +1,45 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.5.0
+  flutter: circleci/flutter@1.0.1
+  codecov: codecov/codecov@3.2.2
+
+jobs:
+  build-and-test-backend:
+    docker:
+      - image: cimg/python:3.9.0
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+          app-dir: backend/
+      - run:
+          name: Run tests
+          command: cd backend && pytest --cov-config=.coveragerc --cov=app --cov-report=xml --cov-report=html test
+      - codecov/upload:
+          file: backend/coverage.xml
+  build-and-test-mooover:
+    docker:
+      - image: cirrusci/flutter
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: cd mooover && flutter doctor
+      - run: 
+          name: Run tests
+          command: cd mooover && flutter test --coverage
+      - run: 
+          name: Build app
+          command: cd mooover && flutter -v build apk
+      - codecov/upload:
+          file: mooover/coverage/lcov.info
+
+workflows:
+  backend:
+    jobs:
+      - build-and-test-backend
+  mooover:
+    jobs:
+      - build-and-test-mooover
