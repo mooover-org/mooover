@@ -11,7 +11,7 @@ jobs:
       - image: cimg/python:3.9.0
     steps:
       - checkout
-      - run: pwd
+      - run: pwd && ls -l
       - run:
           name: Install dependencies
           command: cd /mooover/backend && pip install -r requirements.txt
