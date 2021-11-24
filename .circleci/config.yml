@@ -13,12 +13,12 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip install -r backend/requirements.txt
+          command: cd /mooover/backend && pip install -r requirements.txt
       - run:
           name: Run tests
-          command: pip install pytest && pytest --cov-config=backend/.coveragerc --cov=backend/app --cov-report=xml --cov-report=html backend/test
+          command: cd /mooover/backend && pytest --cov-config=.coveragerc --cov=app --cov-report=xml --cov-report=html test
       - codecov/upload:
-          file: backend/coverage.xml
+          file: /mooover/backend/coverage.xml
   build-and-test-mooover:
     docker:
       - image: cirrusci/flutter
@@ -26,15 +26,15 @@ jobs:
       - checkout
       - run: 
           name: Install dependencies
-          command: cd mooover && flutter doctor
+          command: cd /mooover/mooover && flutter doctor
       - run: 
           name: Run tests
-          command: pwd && flutter test --coverage
+          command: cd /mooover/mooover && flutter test --coverage
       - run: 
           name: Build app
-          command: flutter -v build apk
+          command: cd /mooover/mooover && flutter -v build apk
       - codecov/upload:
-          file: mooover/coverage/lcov.info
+          file: /mooover/mooover/coverage/lcov.info
 
 workflows:
   backend:
