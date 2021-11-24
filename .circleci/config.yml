@@ -26,13 +26,13 @@ jobs:
       - checkout
       - run: 
           name: Install dependencies
-          command: cd /home/circleci/project/mooover && flutter doctor
+          command: pwd && ls -l && cd mooover && flutter doctor
       - run: 
           name: Run tests
-          command: cd /home/circleci/project/mooover && flutter test --coverage
+          command: pwd && ls -l && cd mooover && flutter test --coverage
       - run: 
           name: Build app
-          command: cd /home/circleci/project/mooover && flutter -v build apk
+          command: pwd && ls -l && cd mooover && flutter -v build apk
       - codecov/upload:
           file: /home/circleci/project/mooover/coverage/lcov.info
 
