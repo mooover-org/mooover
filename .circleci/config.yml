@@ -13,10 +13,10 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: cd backend && pip install -r requirements.txt
+          command: pip install -r backend/requirements.txt
       - run:
           name: Run tests
-          command: cd backend && pytest --cov-config=.coveragerc --cov=app --cov-report=xml --cov-report=html test
+          command: pytest --cov-config=backend/.coveragerc --cov=backend/app --cov-report=xml --cov-report=html backend/test
       - codecov/upload:
           file: backend/coverage.xml
   build-and-test-mooover:
@@ -29,10 +29,10 @@ jobs:
           command: cd mooover && flutter doctor
       - run: 
           name: Run tests
-          command: cd mooover && flutter test --coverage
+          command: flutter test --coverage
       - run: 
           name: Build app
-          command: cd mooover && flutter -v build apk
+          command: flutter -v build apk
       - codecov/upload:
           file: mooover/coverage/lcov.info
 
