@@ -19,7 +19,7 @@ jobs:
           command: pytest --cov-config=./backend/.coveragerc --cov=./backend/app --cov-report=xml --cov-report=html ./backend/test
       - codecov/upload:
           file: ./backend/coverage.xml
-          token: 821a965f-10b8-42d0-89d2-461228b362f6
+          token: ${{ secrets.CODECOV_TOKEN }}
   build-and-test-mooover:
     docker:
       - image: cirrusci/flutter
@@ -36,7 +36,7 @@ jobs:
           command: cd ./mooover && flutter -v build apk
       - codecov/upload:
           file: ./mooover/coverage/lcov.info
-          token: 821a965f-10b8-42d0-89d2-461228b362f6
+          token: ${{ secrets.CODECOV_TOKEN }}
 
 workflows:
   backend:
