@@ -13,12 +13,13 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: cd /home/circleci/project/backend && pip install -r requirements.txt
+          command: pip install -r ./backend/requirements.txt
       - run:
           name: Run tests
-          command: cd /home/circleci/project/backend && pytest --cov-config=.coveragerc --cov=app --cov-report=xml --cov-report=html test
+          command: pytest --cov-config=./backend/.coveragerc --cov=./backend/app --cov-report=xml --cov-report=html ./backend/test
       - codecov/upload:
-          file: /home/circleci/project/backend/coverage.xml
+          file: ./backend/coverage.xml
+          token: 821a965f-10b8-42d0-89d2-461228b362f6
   build-and-test-mooover:
     docker:
       - image: cirrusci/flutter
@@ -26,15 +27,16 @@ jobs:
       - checkout
       - run: 
           name: Install dependencies
-          command: pwd && ls -l && cd mooover && flutter doctor
+          command: cd ./mooover && flutter doctor
       - run: 
           name: Run tests
-          command: pwd && ls -l && cd mooover && flutter test --coverage
+          command: cd ./mooover && flutter test --coverage test
       - run: 
           name: Build app
-          command: pwd && ls -l && cd mooover && flutter -v build apk
+          command: cd ./mooover && flutter -v build apk
       - codecov/upload:
-          file: /home/circleci/project/mooover/coverage/lcov.info
+          file: ./mooover/coverage/lcov.info
+          token: 821a965f-10b8-42d0-89d2-461228b362f6
 
 workflows:
   backend:
