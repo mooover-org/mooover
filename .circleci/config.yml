@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cirrusci/flutter
+      - image: adipopbv/flutter:latest
     steps:
       - checkout
       - run: 
@@ -18,7 +18,7 @@ jobs:
           command: flutter -v build apk
   test:
     docker:
-      - image: cirrusci/flutter
+      - image: adipopbv/flutter:latest
     steps:
       - checkout
       - run: 
