@@ -1,0 +1,37 @@
+version: 2.1
+
+orbs:
+  flutter: circleci/flutter@1.0.1
+  codecov: codecov/codecov@3.2.2
+
+jobs:
+  build:
+    docker:
+      - image: adipopbv/flutter:latest
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: flutter doctor
+      - run: 
+          name: Build app
+          command: flutter -v build apk
+  test:
+    docker:
+      - image: adipopbv/flutter:latest
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: flutter doctor
+      - run: 
+          name: Run tests
+          command: flutter test --coverage test
+      - codecov/upload:
+          file: lcov.info
+
+workflows:
+  build-and-test:
+    jobs:
+      - build
+      - test
