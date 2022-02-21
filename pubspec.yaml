@@ -31,9 +31,12 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  http:
-  flutter_appauth:
-  flutter_secure_storage:
+  http: ^0.13.4
+  flutter_appauth: ^2.4.0
+  flutter_secure_storage: ^5.0.2
+  auto_route: ^3.2.4
+  flutter_bloc: ^8.0.1
+  equatable: ^2.0.3
 
 
   # The following adds the Cupertino Icons font to your application.
