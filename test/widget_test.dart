@@ -3,6 +3,6 @@ import 'package:mooover/main.dart';
 
 void main() {
   testWidgets('Base unit test', (WidgetTester tester) async {
-    await tester.pumpWidget(const App());
+    await tester.pumpWidget(App());
   });
 }
