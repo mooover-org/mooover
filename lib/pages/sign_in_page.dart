@@ -5,8 +5,8 @@ import 'package:mooover/config/themes/themes.dart';
 
 /// The screen used for signing in, password resetting and other related
 /// activities.
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({Key? key}) : super(key: key);
+class SignInPage extends StatelessWidget {
+  const SignInPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

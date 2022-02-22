@@ -1,7 +1,11 @@
-import 'package:auto_route/annotations.dart';
-import 'package:mooover/screens/sign_in_screen.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mooover/pages/sign_in_page.dart';
 
 @AdaptiveAutoRouter(routes: <AutoRoute>[
-  AutoRoute(page: SignInScreen, initial: true),
+  AutoRoute(page: SignInPage, initial: true),
 ])
 class $AppRouter {}
+
+class AppRouteObserver extends Mock implements AutoRouteObserver {
+}
