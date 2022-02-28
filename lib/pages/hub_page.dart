@@ -14,7 +14,7 @@ class HubPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Welcome ${UserSessionServices().loggedUser!.givenName}!")
+          Center(child: Text("Welcome ${UserSessionServices().loggedUser?.givenName}!"))
         ],
       ),
     );

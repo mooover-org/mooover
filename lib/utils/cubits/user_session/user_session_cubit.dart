@@ -46,12 +46,12 @@ class UserSessionCubit extends Cubit<UserSessionState> {
   }
 
   Future<void> refreshPastSession() async {
-    final storedRefreshToken = await secureStorage.read(key: 'refresh_token');
-    if (storedRefreshToken == null) {
-      emit(NoUserSessionState());
-    }
-    emit(LoadingUserSessionState());
     try {
+      final storedRefreshToken = await secureStorage.read(key: 'refresh_token');
+      if (storedRefreshToken == null) {
+        emit(NoUserSessionState());
+      }
+      emit(LoadingUserSessionState());
       final response = await appAuth.token(TokenRequest(
         auth0ClientId,
         auth0RedirectUrl,

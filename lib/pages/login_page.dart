@@ -37,6 +37,9 @@ class LoginPage extends StatelessWidget {
                       child: TextButton(
                           onPressed: () async {
                             await context.read<UserSessionCubit>().loginAction();
+                            if (context.read<UserSessionCubit>().state is ValidUserSessionState) {
+                              context.router.pushNamed("/hub-page");
+                            }
                           },
                           child: const Text("Get Started!")),
                     ),

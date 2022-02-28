@@ -9,15 +9,13 @@ abstract class UserSessionState extends Equatable {
 @immutable
 class NoUserSessionState extends UserSessionState {
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 @immutable
 class LoadingUserSessionState extends UserSessionState {
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 @immutable
