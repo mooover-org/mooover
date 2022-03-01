@@ -7,35 +7,33 @@ abstract class UserSessionState extends Equatable {
 }
 
 @immutable
-class NoUserSessionState extends UserSessionState {
+class InitialUserSessionState extends UserSessionState {
+  const InitialUserSessionState();
+
   @override
   List<Object?> get props => [];
 }
 
 @immutable
 class LoadingUserSessionState extends UserSessionState {
+  const LoadingUserSessionState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+@immutable
+class NoUserSessionState extends UserSessionState {
+  const NoUserSessionState();
+
   @override
   List<Object?> get props => [];
 }
 
 @immutable
 class ValidUserSessionState extends UserSessionState {
-  final String accessToken;
-  final DateTime accessTokenExpirationDateTime;
-  final String refreshToken;
-
-  const ValidUserSessionState(this.accessToken, this.accessTokenExpirationDateTime, this.refreshToken);
+  const ValidUserSessionState();
 
   @override
-  List<Object?> get props => [accessToken, refreshToken];
-}
-
-@immutable
-class InvalidUserSessionState extends UserSessionState {
-  final String errorMessage;
-
-  const InvalidUserSessionState(this.errorMessage);
-
-  @override
-  List<Object?> get props => [errorMessage];
+  List<Object?> get props => [];
 }

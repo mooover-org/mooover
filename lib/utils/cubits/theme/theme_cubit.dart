@@ -6,7 +6,7 @@ import 'package:mooover/utils/cubits/theme/theme_states.dart';
 ///
 /// It manages the [ThemeState] changes.
 class ThemeCubit extends Cubit<ThemeState> {
-  ThemeCubit(initialState) : super(initialState);
+  ThemeCubit({initialState}) : super(initialState ?? InitialThemeState());
 
   /// Changes the app style theme.
   ///

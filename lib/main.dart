@@ -10,9 +10,7 @@ void main() {
   runApp(App());
 }
 
-/// The main application class.
-///
-/// It builds the theme and the [AppRouter].
+/// The main application widget.
 class App extends StatelessWidget {
   final _router = AppRouter();
 
@@ -21,19 +19,25 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => ThemeCubit(InitialThemeState())),
-          BlocProvider(
-              create: (_) => UserSessionCubit(LoadingUserSessionState())),
-        ],
-        child: BlocBuilder<ThemeCubit, ThemeState>(
-          builder: (_, themeState) => MaterialApp.router(
+      providers: [
+        BlocProvider(
+          create: (_) => ThemeCubit(),
+        ),
+        BlocProvider(
+          create: (_) => UserSessionCubit(),
+        ),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeState>(
+        builder: (_, state) {
+          return MaterialApp.router(
             title: 'Mooover',
             debugShowCheckedModeBanner: false,
-            theme: themeState.themeData,
+            theme: state.themeData,
             routerDelegate: _router.delegate(),
             routeInformationParser: _router.defaultRouteParser(),
-          ),
-        ));
+          );
+        },
+      ),
+    );
   }
 }
