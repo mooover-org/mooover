@@ -16,8 +16,8 @@ class UserSessionServices {
 
   factory UserSessionServices() => _instance;
 
-  final FlutterAppAuth appAuth = FlutterAppAuth();
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  final FlutterAppAuth _appAuth = FlutterAppAuth();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   String? accessToken;
   String? refreshToken;
@@ -25,7 +25,7 @@ class UserSessionServices {
   /// Sets the refresh token value in memory and in the secure storage.
   Future<void> setRefreshToken(String? value) async {
     refreshToken = value;
-    await secureStorage.write(key: refreshTokenKey, value: value);
+    await _secureStorage.write(key: refreshTokenKey, value: value);
   }
 
   /// Attempts to load the last user session.
@@ -36,12 +36,12 @@ class UserSessionServices {
   /// Throws [LoginException] if the process fails.
   Future<void> loadLastSession() async {
     try {
-      final storedRefreshToken = await secureStorage.read(key: refreshTokenKey);
+      final storedRefreshToken = await _secureStorage.read(key: refreshTokenKey);
       if (storedRefreshToken == null) {
         log("no last session");
         throw LoginException(message: "no last session");
       }
-      final TokenResponse? response = await appAuth.token(
+      final TokenResponse? response = await _appAuth.token(
         TokenRequest(
           auth0ClientId,
           auth0RedirectUrl,
@@ -50,7 +50,7 @@ class UserSessionServices {
         ),
       );
       if (response == null) {
-        log("got null response when refreshing tokens in");
+        log("got null response when refreshing tokens");
         throw LoginException();
       }
       log("got ${response.toString()}");
@@ -74,7 +74,7 @@ class UserSessionServices {
   Future<void> login() async {
     try {
       final AuthorizationTokenResponse? response =
-      await appAuth.authorizeAndExchangeCode(
+      await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
           auth0ClientId,
           auth0RedirectUrl,
@@ -105,7 +105,7 @@ class UserSessionServices {
   /// Throws [LogoutException] if logout process fails.
   Future<void> logout() async {
     try {
-      await secureStorage.delete(key: refreshTokenKey);
+      await _secureStorage.delete(key: refreshTokenKey);
       await http.get(
         Uri.https(
           auth0Domain,

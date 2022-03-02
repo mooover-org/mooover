@@ -9,11 +9,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
   UserSessionCubit({initialState})
       : super(initialState ?? const InitialUserSessionState());
 
-  /// Sets a new user session state.
-  void changeUserSessionState(UserSessionState newState) {
-    emit(newState);
-  }
-
+  /// Performs a last session loading action.
   Future<void> loadLastSession() async {
     emit(const LoadingUserSessionState());
     try {
@@ -24,6 +20,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     }
   }
 
+  /// Performs a login action.
   Future<void> login() async {
     emit(const LoadingUserSessionState());
     try {
@@ -34,6 +31,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     }
   }
 
+  /// Performs a logout action.
   Future<void> logout() async {
     emit(const LoadingUserSessionState());
     try {

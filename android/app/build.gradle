@@ -49,6 +49,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         manifestPlaceholders = [appAuthRedirectScheme: 'usr.adipopbv.mooover']
+        multiDexEnabled true
     }
 
     buildTypes {
