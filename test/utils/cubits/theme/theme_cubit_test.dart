@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mooover/config/themes/theme_cubit.dart';
+import 'package:mooover/utils/cubits/theme/theme_cubit.dart';
 import 'package:mooover/config/themes/themes.dart';
 
 void main() {
