@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
+import 'package:mooover/utils/services/user_services.dart';
+import 'package:mooover/utils/services/user_session_services.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -15,7 +17,7 @@ class Dashboard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Center(child: Text("Welcome!")),
+          Center(child: Text("Welcome " + UserSessionServices().idToken!.name + "!")),
           TextButton(
               onPressed: () => context.read<UserSessionCubit>().logout(),
               child: const Text("Log out")),

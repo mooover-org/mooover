@@ -7,6 +7,7 @@ import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/pages/home/components/dashboard.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
+import 'package:mooover/utils/services/user_session_services.dart';
 
 /// The home page.
 ///
@@ -23,7 +24,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     log("called initState on HomePage");
-    context.read<UserSessionCubit>().loadLastSession();
+    if (UserSessionServices().accessToken == null) {
+      context.read<UserSessionCubit>().loadLastSession();
+    }
     super.initState();
   }
 

@@ -3,8 +3,12 @@ import 'dart:developer';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mooover/constants/constants.dart';
+import 'package:mooover/constants/endpoints.dart';
 import 'package:mooover/utils/domain/exceptions.dart';
+import 'package:mooover/utils/domain/id_token.dart';
+import 'package:mooover/utils/helpers/auth_interceptor.dart';
 
 /// The user session services.
 ///
@@ -18,7 +22,11 @@ class UserSessionServices {
 
   final FlutterAppAuth _appAuth = FlutterAppAuth();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final http.Client httpClient = InterceptedClient.build(interceptors: [
+    AuthInterceptor(),
+  ]);
 
+  IdToken? idToken;
   String? accessToken;
   String? refreshToken;
 
@@ -36,7 +44,8 @@ class UserSessionServices {
   /// Throws [LoginException] if the process fails.
   Future<void> loadLastSession() async {
     try {
-      final storedRefreshToken = await _secureStorage.read(key: refreshTokenKey);
+      final storedRefreshToken =
+          await _secureStorage.read(key: refreshTokenKey);
       if (storedRefreshToken == null) {
         log("no last session");
         throw LoginException(message: "no last session");
@@ -46,6 +55,7 @@ class UserSessionServices {
           auth0ClientId,
           auth0RedirectUrl,
           issuer: auth0Issuer,
+          additionalParameters: {"audience": auth0Audience},
           refreshToken: storedRefreshToken,
         ),
       );
@@ -54,15 +64,17 @@ class UserSessionServices {
         throw LoginException();
       }
       log("got ${response.toString()}");
+      idToken = IdToken.fromString(response.idToken);
+      accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
       return;
     } on LoginException {
+      logout();
       rethrow;
     } catch (e) {
       log("Error: ${e.toString()}");
-      throw LoginException();
-    } finally {
       logout();
+      throw LoginException();
     }
   }
 
@@ -74,12 +86,13 @@ class UserSessionServices {
   Future<void> login() async {
     try {
       final AuthorizationTokenResponse? response =
-      await _appAuth.authorizeAndExchangeCode(
+          await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
           auth0ClientId,
           auth0RedirectUrl,
           issuer: auth0Issuer,
-          scopes: ["openid", "profile", "offline_access"],
+          additionalParameters: {"audience": auth0Audience},
+          scopes: ["openid", "profile", "offline_access", "email"],
           promptValues: ["login"],
         ),
       );
@@ -88,7 +101,15 @@ class UserSessionServices {
         throw LoginException();
       }
       log("got ${response.toString()}");
+      idToken = IdToken.fromString(response.idToken);
+      accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
+      try {
+        await httpClient.post(userServicesUrl.toUri(),
+            body: {"user_id": idToken!.userId, "name": idToken!.name});
+      } catch (e) {
+        log(e.toString());
+      }
       return;
     } on LoginException {
       rethrow;

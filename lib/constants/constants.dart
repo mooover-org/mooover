@@ -3,5 +3,6 @@ const auth0ClientId = "3ZuS2OrDYH0erdYXN9plqC5qG3UKMZAL";
 const bundleIdentifier = "usr.adipopbv.mooover";
 const auth0RedirectUrl = "$bundleIdentifier://login-callback";
 const auth0Issuer = "https://$auth0Domain";
+const auth0Audience = "mooover/api";
 
 const refreshTokenKey = "refresh_token";
