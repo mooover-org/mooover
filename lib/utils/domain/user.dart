@@ -1,12 +1,34 @@
-import 'package:flutter/material.dart';
-
+/// The user model.
 class User {
+  String userId;
   String givenName;
   String familyName;
   String name;
   String nickname;
-  Image profilePicture;
+  String email;
+  String picture;
 
-  User(this.givenName, this.familyName, this.name, this.nickname,
-      this.profilePicture);
+  User(this.userId, this.givenName, this.familyName, this.name, this.nickname,
+      this.email, this.picture);
+
+  /// Creates a user from json map.
+  User.fromJson(Map<String, dynamic> jsonData)
+      : userId = jsonData['user_id'],
+        givenName = jsonData['given_name'],
+        familyName = jsonData['family_name'],
+        name = jsonData['name'],
+        nickname = jsonData['nickname'],
+        email = jsonData['email'],
+        picture = jsonData['picture'];
+
+  /// Creates a json map from the user.
+  Map<String, dynamic> toJson() => {
+        'user_id': userId,
+        'given_name': givenName,
+        'family_name': familyName,
+        'name': name,
+        'nickname': nickname,
+        'email': email,
+        'picture': picture,
+      };
 }

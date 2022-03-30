@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_appauth/flutter_appauth.dart';
@@ -81,6 +82,7 @@ class UserSessionServices {
   /// Performs a login action.
   ///
   /// Opens a web browser page and logs the user in through the Auth0 service.
+  /// The method then attempts to add the user to the database if necessary.
   ///
   /// Throws [LoginException] if login process fails.
   Future<void> login() async {
@@ -105,8 +107,19 @@ class UserSessionServices {
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
       try {
+        final userInfo = jsonDecode(
+            (await httpClient.get("$auth0Issuer/userinfo".toUri())).body);
         await httpClient.post(userServicesUrl.toUri(),
-            body: {"user_id": idToken!.userId, "name": idToken!.name});
+            body: jsonEncode({
+              "id": idToken!.userId,
+              "name": userInfo["name"] as String,
+              "given_name": userInfo["given_name"] as String,
+              "family_name": userInfo["family_name"] as String,
+              "nickname": userInfo["nickname"] as String,
+              "email": userInfo["email"] as String,
+              "picture": userInfo["picture"] as String,
+            }),
+            headers: {"Content-Type": "application/json"});
       } catch (e) {
         log(e.toString());
       }
