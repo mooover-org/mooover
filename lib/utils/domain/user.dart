@@ -13,7 +13,7 @@ class User {
 
   /// Creates a user from json map.
   User.fromJson(Map<String, dynamic> jsonData)
-      : userId = jsonData['user_id'],
+      : userId = jsonData['id'],
         givenName = jsonData['given_name'],
         familyName = jsonData['family_name'],
         name = jsonData['name'],
@@ -23,7 +23,7 @@ class User {
 
   /// Creates a json map from the user.
   Map<String, dynamic> toJson() => {
-        'user_id': userId,
+        'id': userId,
         'given_name': givenName,
         'family_name': familyName,
         'name': name,
