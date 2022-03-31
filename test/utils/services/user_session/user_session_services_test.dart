@@ -6,7 +6,9 @@ void main() {
   group("User session services", () {
     test("refresh token is being saved", () async {
       WidgetsFlutterBinding.ensureInitialized();
-      await UserSessionServices().setRefreshToken("value");
+      try {
+        await UserSessionServices().setRefreshToken("value");
+      } catch (_) {}
       expect(UserSessionServices().refreshToken, "value");
     });
   });
