@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
-import 'package:mooover/utils/services/user_session/user_session_services.dart';
+import 'package:mooover/utils/services/user_session_services.dart';
 
 /// The user session [Cubit].
 ///
