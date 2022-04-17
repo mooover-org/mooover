@@ -33,14 +33,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<UserSessionCubit, UserSessionState>(
         listener: (_, state) {
-      if (state is NoUserSessionState) {
+      if (state is UserSessionNoState) {
         context.router.replace(const LoginPageRoute());
       }
     }, builder: (_, state) {
-      if (state is ValidUserSessionState) {
+      if (state is UserSessionValidState) {
         return _getHomePageDisplay();
-      } else if (state is LoadingUserSessionState ||
-          state is NoUserSessionState) {
+      } else if (state is UserSessionLoadingState ||
+          state is UserSessionNoState) {
         return _getLoadingDisplay();
       } else {
         return _getErrorDisplay();

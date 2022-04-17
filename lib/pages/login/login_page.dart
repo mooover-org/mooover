@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
+import 'package:mooover/pages/login/components/login_form.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
 
@@ -16,15 +17,15 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<UserSessionCubit, UserSessionState>(
       listener: (_, state) {
-        if (state is ValidUserSessionState) {
+        if (state is UserSessionValidState) {
           context.router.replace(const HomePageRoute());
         }
       },
       builder: (_, state) {
-        if (state is NoUserSessionState) {
-          return _getLoginPageDisplay(context);
-        } else if (state is LoadingUserSessionState ||
-            state is ValidUserSessionState) {
+        if (state is UserSessionNoState) {
+          return _getLoginPageDisplay();
+        } else if (state is UserSessionLoadingState ||
+            state is UserSessionValidState) {
           return _getLoadingDisplay();
         } else {
           return _getErrorDisplay();
@@ -34,21 +35,12 @@ class LoginPage extends StatelessWidget {
   }
 
   /// This method returns the display for the login page.
-  Widget _getLoginPageDisplay(BuildContext context) {
+  Widget _getLoginPageDisplay() {
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text("MOOOVER")),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Center(child: Text("Welcome!\nWe are happy to have you here.")),
-          TextButton(
-              onPressed: () => context.read<UserSessionCubit>().login(),
-              child: const Text("Get started")),
-        ],
-      ),
+      body: const LoginForm(),
     );
   }
 
