@@ -5,8 +5,7 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mooover/constants/constants.dart';
-import 'package:mooover/constants/endpoints.dart';
+import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/domain/exceptions.dart';
 import 'package:mooover/utils/domain/id_token.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
@@ -34,7 +33,7 @@ class UserSessionServices {
   /// Sets the refresh token value in memory and in the secure storage.
   Future<void> setRefreshToken(String? value) async {
     refreshToken = value;
-    await _secureStorage.write(key: refreshTokenKey, value: value);
+    await _secureStorage.write(key: AppConfig().refreshTokenKey, value: value);
   }
 
   /// Attempts to load the last user session.
@@ -46,17 +45,17 @@ class UserSessionServices {
   Future<void> loadLastSession() async {
     try {
       final storedRefreshToken =
-          await _secureStorage.read(key: refreshTokenKey);
+          await _secureStorage.read(key: AppConfig().refreshTokenKey);
       if (storedRefreshToken == null) {
         log("no last session");
         throw LoginException(message: "no last session");
       }
       final TokenResponse? response = await _appAuth.token(
         TokenRequest(
-          auth0ClientId,
-          auth0RedirectUrl,
-          issuer: auth0Issuer,
-          additionalParameters: {"audience": auth0Audience},
+          AppConfig().auth0ClientId,
+          AppConfig().auth0RedirectUrl,
+          issuer: AppConfig().auth0Issuer,
+          additionalParameters: {"audience": AppConfig().auth0Audience},
           refreshToken: storedRefreshToken,
         ),
       );
@@ -90,10 +89,10 @@ class UserSessionServices {
       final AuthorizationTokenResponse? response =
           await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
-          auth0ClientId,
-          auth0RedirectUrl,
-          issuer: auth0Issuer,
-          additionalParameters: {"audience": auth0Audience},
+          AppConfig().auth0ClientId,
+          AppConfig().auth0RedirectUrl,
+          issuer: AppConfig().auth0Issuer,
+          additionalParameters: {"audience": AppConfig().auth0Audience},
           scopes: ["openid", "profile", "offline_access", "email"],
           promptValues: ["login"],
         ),
@@ -108,8 +107,8 @@ class UserSessionServices {
       await setRefreshToken(response.refreshToken);
       try {
         final userInfo = jsonDecode(
-            (await httpClient.get("$auth0Issuer/userinfo".toUri())).body);
-        await httpClient.post((userServicesUrl + "/").toUri(),
+            (await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body);
+        await httpClient.post((AppConfig().userServicesUrl + "/").toUri(),
             body: jsonEncode({
               "id": idToken!.userId,
               "name": userInfo["name"] as String,
@@ -124,11 +123,9 @@ class UserSessionServices {
         log(e.toString());
       }
       return;
-    } on LoginException {
-      rethrow;
     } catch (e) {
       log("Error: ${e.toString()}");
-      throw LoginException();
+      throw LoginException(message: e.toString());
     }
   }
 
@@ -139,13 +136,13 @@ class UserSessionServices {
   /// Throws [LogoutException] if logout process fails.
   Future<void> logout() async {
     try {
-      await _secureStorage.delete(key: refreshTokenKey);
+      await _secureStorage.delete(key: AppConfig().refreshTokenKey);
       await http.get(
         Uri.https(
-          auth0Domain,
+          AppConfig().auth0Domain,
           '/v2/logout',
           {
-            'client_id': auth0ClientId,
+            'client_id': AppConfig().auth0ClientId,
             'federated': '',
           },
         ),

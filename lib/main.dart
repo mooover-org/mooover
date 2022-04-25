@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
@@ -5,9 +6,15 @@ import 'package:mooover/utils/cubits/dashboard/dashboard_cubit.dart';
 import 'package:mooover/utils/cubits/theme/theme_cubit.dart';
 import 'package:mooover/utils/cubits/theme/theme_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
+import 'package:mooover/utils/helpers/app_config.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (kDebugMode) {
+    await AppConfig.loadForDevelopment();
+  } else {
+    await AppConfig.loadForProduction();
+  }
   runApp(App());
 }
 

@@ -1,0 +1,16 @@
+{
+  "api": {
+    "userServicesUrl": "http://192.168.1.8:8000/api/v1/users"
+  },
+  "auth0": {
+    "domain": "dev-ed4pmqgq.eu.auth0.com",
+    "clientId": "XVZAWAfq1gfVO4icx7SD4rnpLJ2FnUo5",
+    "redirectUrl": "usr.adipopbv.mooover://login-callback",
+    "issuer": "https://dev-ed4pmqgq.eu.auth0.com",
+    "audience": "mooover/api",
+    "refreshTokenKey": "refresh_token"
+  },
+  "app": {
+    "bundleIdentifier": "usr.adipopbv.mooover"
+  }
+}
