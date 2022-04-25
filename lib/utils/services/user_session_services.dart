@@ -5,9 +5,9 @@ import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/domain/exceptions.dart';
 import 'package:mooover/utils/domain/id_token.dart';
+import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 
 /// The user session services.
@@ -106,8 +106,9 @@ class UserSessionServices {
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
       try {
-        final userInfo = jsonDecode(
-            (await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body);
+        final userInfo = jsonDecode((await httpClient
+                .get("${AppConfig().auth0Issuer}/userinfo".toUri()))
+            .body);
         await httpClient.post((AppConfig().userServicesUrl + "/").toUri(),
             body: jsonEncode({
               "id": idToken!.userId,
@@ -154,5 +155,9 @@ class UserSessionServices {
       log("Error: ${e.toString()}");
       throw LogoutException();
     }
+  }
+
+  String getUserId() {
+    return idToken!.userId;
   }
 }

@@ -26,4 +26,22 @@ class UserServices {
     log('Got user: ${user.toJson()}');
     return user;
   }
+
+  Future<int> getUserSteps(String userId) async {
+    final steps = (await httpClient.get(
+            (AppConfig().userServicesUrl + '/$userId/steps').toUri(),
+            headers: {'Content-Type': 'application/json'}))
+        .body;
+    log('Got user steps: $steps');
+    return int.parse(steps);
+  }
+
+  Future<int> getUserHeartPoints(String userId) async {
+    final heartPoints = (await httpClient.get(
+            (AppConfig().userServicesUrl + '/$userId/heartPoints').toUri(),
+            headers: {'Content-Type': 'application/json'}))
+        .body;
+    log('Got user heart points: $heartPoints');
+    return int.parse(heartPoints);
+  }
 }
