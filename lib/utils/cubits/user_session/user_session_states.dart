@@ -1,38 +1,43 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+/// [UserSessionState] is the base state of the [UserSessionCubit].
 @immutable
 abstract class UserSessionState extends Equatable {
   const UserSessionState();
 }
 
+/// [UserSessionInitial] is the initial state of the [UserSessionCubit].
 @immutable
-class InitialUserSessionState extends UserSessionState {
-  const InitialUserSessionState();
+class UserSessionInitialState extends UserSessionState {
+  const UserSessionInitialState();
 
   @override
   List<Object?> get props => [];
 }
 
+/// [UserSessionLoading] is the state of the [UserSessionCubit] when it's loading.
 @immutable
-class LoadingUserSessionState extends UserSessionState {
-  const LoadingUserSessionState();
+class UserSessionLoadingState extends UserSessionState {
+  const UserSessionLoadingState();
 
   @override
   List<Object?> get props => [];
 }
 
+/// [UserSessionLoaded] is the state of the [UserSessionCubit] when there is no user session.
 @immutable
-class NoUserSessionState extends UserSessionState {
-  const NoUserSessionState();
+class UserSessionNoState extends UserSessionState {
+  const UserSessionNoState();
 
   @override
   List<Object?> get props => [];
 }
 
+/// [UserSessionLoaded] is the state of the [UserSessionCubit] when it's loaded.
 @immutable
-class ValidUserSessionState extends UserSessionState {
-  const ValidUserSessionState();
+class UserSessionValidState extends UserSessionState {
+  const UserSessionValidState();
 
   @override
   List<Object?> get props => [];

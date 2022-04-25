@@ -7,38 +7,38 @@ import 'package:mooover/utils/services/user_session_services.dart';
 /// It manages the [UserSessionState] changes.
 class UserSessionCubit extends Cubit<UserSessionState> {
   UserSessionCubit({initialState})
-      : super(initialState ?? const InitialUserSessionState());
+      : super(initialState ?? const UserSessionInitialState());
 
   /// Performs a last session loading action.
   Future<void> loadLastSession() async {
-    emit(const LoadingUserSessionState());
+    emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().loadLastSession();
-      emit(const ValidUserSessionState());
+      emit(const UserSessionValidState());
     } catch (_) {
-      emit(const NoUserSessionState());
+      emit(const UserSessionNoState());
     }
   }
 
   /// Performs a login action.
   Future<void> login() async {
-    emit(const LoadingUserSessionState());
+    emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().login();
-      emit(const ValidUserSessionState());
+      emit(const UserSessionValidState());
     } catch (_) {
-      emit(const NoUserSessionState());
+      emit(const UserSessionNoState());
     }
   }
 
   /// Performs a logout action.
   Future<void> logout() async {
-    emit(const LoadingUserSessionState());
+    emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().logout();
-      emit(const NoUserSessionState());
+      emit(const UserSessionNoState());
     } catch (_) {
-      emit(const ValidUserSessionState());
+      emit(const UserSessionValidState());
     }
   }
 }

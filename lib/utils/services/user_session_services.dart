@@ -109,7 +109,7 @@ class UserSessionServices {
       try {
         final userInfo = jsonDecode(
             (await httpClient.get("$auth0Issuer/userinfo".toUri())).body);
-        await httpClient.post(userServicesUrl.toUri(),
+        await httpClient.post((userServicesUrl + "/").toUri(),
             body: jsonEncode({
               "id": idToken!.userId,
               "name": userInfo["name"] as String,

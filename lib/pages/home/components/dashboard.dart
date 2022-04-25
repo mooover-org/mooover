@@ -1,42 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
-import 'package:mooover/utils/domain/user.dart';
-import 'package:mooover/utils/services/user_services.dart';
-import 'package:mooover/utils/services/user_session_services.dart';
+import 'package:mooover/utils/cubits/dashboard/dashboard_cubit.dart';
+import 'package:mooover/utils/cubits/dashboard/dashboard_states.dart';
 
 /// This is the dashboard component.
 ///
 /// It is used to display the most important information about the user, such as
 /// the steps counter and heart points counter.
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
   @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  @override
+  void initState() {
+    BlocProvider.of<DashboardCubit>(context).loadData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: UserServices().getUser(UserSessionServices().idToken!.userId),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (snapshot.hasData) {
-            return _getDashboardDisplay(context, snapshot.data!);
-          } else {
-            return _getLoadingDisplay();
-          }
-        });
+    return BlocBuilder<DashboardCubit, DashboardState>(
+      bloc: context.read<DashboardCubit>(),
+      builder: (_, state) {
+        if (state is DashboardInitialState) {
+          return _getLoadingDisplay();
+        } else if (state is DashboardLoadingState) {
+          return _getLoadingDisplay();
+        } else if (state is DashboardLoadedState) {
+          return _getLoadedDisplay(state);
+        } else if (state is DashboardErrorState) {
+          return _getErrorDisplay(state);
+        } else {
+          return _getErrorDisplay(null);
+        }
+      },
+    );
   }
 
   /// This method returns the display for the dashboard.
-  Widget _getDashboardDisplay(BuildContext context, User user) {
+  Widget _getLoadedDisplay(DashboardLoadedState state) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Center(
-            child: CircleAvatar(backgroundImage: NetworkImage(user.picture))),
-        Center(child: Text("Welcome " + user.givenName + "!")),
-        TextButton(
-            onPressed: () => context.read<UserSessionCubit>().logout(),
-            child: const Text("Log out")),
+          child: Text(
+            'Steps: ${state.steps}',
+          ),
+        ),
+        Center(
+          child: Text(
+            'Heart Points: ${state.heartPoints}',
+          ),
+        ),
+        Center(
+          child: Text(
+            'Name: ${state.name}',
+          ),
+        )
       ],
     );
   }
@@ -44,5 +69,11 @@ class Dashboard extends StatelessWidget {
   /// This method returns the display for the loading state.
   Widget _getLoadingDisplay() {
     return const Center(child: CircularProgressIndicator());
+  }
+
+  /// This method returns the display for the error state.
+  Widget _getErrorDisplay(DashboardErrorState? state) {
+    String errorMessage = state?.errorMessage ?? "An error occurred";
+    return Center(child: Text("Error: $errorMessage"));
   }
 }
