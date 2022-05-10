@@ -11,6 +11,12 @@
     "refreshTokenKey": "refresh_token"
   },
   "app": {
-    "bundleIdentifier": "usr.adipopbv.mooover"
+    "bundleIdentifier": "usr.adipopbv.mooover",
+    "initialAppTheme": "light"
+  },
+  "services": {
+    "appSettings": {
+      "appThemeKey": "app_theme"
+    }
   }
 }

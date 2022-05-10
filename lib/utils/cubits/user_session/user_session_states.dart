@@ -25,19 +25,19 @@ class UserSessionLoadingState extends UserSessionState {
   List<Object?> get props => [];
 }
 
-/// [UserSessionLoaded] is the state of the [UserSessionCubit] when there is no user session.
+/// [UserSessionLoaded] is the state of the [UserSessionCubit] when it's loaded.
 @immutable
-class UserSessionNoState extends UserSessionState {
-  const UserSessionNoState();
+class UserSessionValidState extends UserSessionState {
+  const UserSessionValidState();
 
   @override
   List<Object?> get props => [];
 }
 
-/// [UserSessionLoaded] is the state of the [UserSessionCubit] when it's loaded.
+/// [UserSessionLoaded] is the state of the [UserSessionCubit] when there is no user session.
 @immutable
-class UserSessionValidState extends UserSessionState {
-  const UserSessionValidState();
+class UserSessionNoState extends UserSessionState {
+  const UserSessionNoState();
 
   @override
   List<Object?> get props => [];

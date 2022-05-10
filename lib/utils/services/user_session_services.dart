@@ -160,4 +160,8 @@ class UserSessionServices {
   String getUserId() {
     return idToken!.userId;
   }
+
+  bool isLoggedIn() {
+    return accessToken != null;
+  }
 }

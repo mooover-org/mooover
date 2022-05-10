@@ -6,13 +6,17 @@ import 'package:mooover/utils/services/user_session_services.dart';
 /// A [Cubit] that handles the states of the [Dashboard].
 class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit({DashboardState initialState = const DashboardInitialState()})
-      : super(initialState);
+      : super(initialState) {
+    loadDashboard();
+  }
 
   /// Performs a loading data action.
-  Future<void> loadData() async {
+  Future<void> loadDashboard() async {
     emit(const DashboardLoadingState());
     try {
-      final profilePicture = (await UserServices().getUser(UserSessionServices().getUserId())).picture;
+      final profilePicture =
+          (await UserServices().getUser(UserSessionServices().getUserId()))
+              .picture;
       emit(DashboardLoadedState(0, 0, profilePicture));
     } catch (e) {
       emit(DashboardErrorState(e.toString()));

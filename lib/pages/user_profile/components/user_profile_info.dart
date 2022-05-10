@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_profile/user_profile_info_cubit.dart';
@@ -30,7 +31,8 @@ class UserProfileInfo extends StatelessWidget {
   }
 
   /// This method returns the display for the profile info.
-  Widget _getLoadedDisplay(BuildContext context, UserProfileInfoLoadedState state) {
+  Widget _getLoadedDisplay(
+      BuildContext context, UserProfileInfoLoadedState state) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -54,6 +56,18 @@ class UserProfileInfo extends StatelessWidget {
         Center(
           child: Text(
             state.email,
+          ),
+        ),
+        Center(
+          child: IconButton(
+            iconSize: 50,
+            icon: const Icon(
+              Icons.settings,
+              size: 50,
+            ),
+            onPressed: () {
+              context.router.pushNamed('/settings');
+            },
           ),
         ),
       ],

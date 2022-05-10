@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
-import 'package:mooover/utils/cubits/dashboard/dashboard_cubit.dart';
-import 'package:mooover/utils/cubits/theme/theme_cubit.dart';
-import 'package:mooover/utils/cubits/theme/theme_states.dart';
+import 'package:mooover/config/themes/themes.dart';
+import 'package:mooover/utils/cubits/app_settings/app_settings_cubit.dart';
+import 'package:mooover/utils/cubits/app_settings/app_settings_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 
@@ -29,26 +29,63 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => ThemeCubit(),
+          create: (_) => AppSettingsCubit(),
         ),
         BlocProvider(
           create: (_) => UserSessionCubit(),
         ),
-        BlocProvider(
-          create: (_) => DashboardCubit(),
-        ),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeState>(
-        builder: (_, state) {
-          return MaterialApp.router(
-            title: 'Mooover',
-            debugShowCheckedModeBanner: false,
-            theme: state.themeData,
-            routerDelegate: _router.delegate(),
-            routeInformationParser: _router.defaultRouteParser(),
-          );
+      child: BlocBuilder<AppSettingsCubit, AppSettingsState>(
+        builder: (context, state) {
+          if (state is AppSettingsInitialState) {
+            return _getLoadedApp(state);
+          } else if (state is AppSettingsLoadingState) {
+            return _getLoadingApp();
+          } else if (state is AppSettingsLoadedState) {
+            return _getLoadedApp(state);
+          } else if (state is AppSettingsErrorState) {
+            return _getErrorApp();
+          } else {
+            return _getErrorApp();
+          }
         },
       ),
     );
+  }
+
+  /// Returns the loading app.
+  MaterialApp _getLoadingApp() {
+    return MaterialApp.router(
+      title: 'Mooover',
+      debugShowCheckedModeBanner: false,
+      theme: appThemes[AppTheme.light],
+      routerDelegate: _router.delegate(),
+      routeInformationParser: _router.defaultRouteParser(),
+    );
+  }
+
+  /// Returns the loaded app.
+  MaterialApp _getLoadedApp(AppSettingsLoadedState state) {
+    return MaterialApp.router(
+      title: 'Mooover',
+      debugShowCheckedModeBanner: false,
+      theme: appThemes[state.appTheme],
+      routerDelegate: _router.delegate(),
+      routeInformationParser: _router.defaultRouteParser(),
+    );
+  }
+
+  /// Returns the error app.
+  MaterialApp _getErrorApp() {
+    return MaterialApp(
+        title: 'Mooover',
+        debugShowCheckedModeBanner: false,
+        theme: appThemes[AppTheme.light],
+        home: const Scaffold(
+          body: Center(
+            child: Text(
+                "Oops! Something went wrong.\nPlease restart the app or try again later."),
+          ),
+        ));
   }
 }

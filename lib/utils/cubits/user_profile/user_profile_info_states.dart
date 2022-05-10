@@ -38,10 +38,12 @@ class UserProfileInfoLoadedState extends UserProfileInfoState {
   final String email;
   final String picture;
 
-  const UserProfileInfoLoadedState(this.givenName, this.familyName, this.name, this.nickname, this.email, this.picture);
+  const UserProfileInfoLoadedState(this.givenName, this.familyName, this.name,
+      this.nickname, this.email, this.picture);
 
   @override
-  List<Object> get props => [givenName, familyName, name, nickname, email, picture];
+  List<Object> get props =>
+      [givenName, familyName, name, nickname, email, picture];
 }
 
 /// The state of the [UserProfileCubit] when the user user_profile page throws an error

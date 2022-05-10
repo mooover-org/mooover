@@ -7,7 +7,11 @@ import 'package:mooover/utils/services/user_session_services.dart';
 /// It manages the [UserSessionState] changes.
 class UserSessionCubit extends Cubit<UserSessionState> {
   UserSessionCubit({initialState})
-      : super(initialState ?? const UserSessionInitialState());
+      : super(initialState ?? const UserSessionInitialState()) {
+    if (!UserSessionServices().isLoggedIn()) {
+      loadLastSession();
+    }
+  }
 
   /// Performs a last session loading action.
   Future<void> loadLastSession() async {
@@ -38,7 +42,11 @@ class UserSessionCubit extends Cubit<UserSessionState> {
       await UserSessionServices().logout();
       emit(const UserSessionNoState());
     } catch (_) {
-      emit(const UserSessionValidState());
+      if (UserSessionServices().isLoggedIn()) {
+        emit(const UserSessionValidState());
+      } else {
+        emit(const UserSessionNoState());
+      }
     }
   }
 }
