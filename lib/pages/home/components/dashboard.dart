@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/dashboard/dashboard_cubit.dart';
@@ -48,6 +49,18 @@ class _DashboardState extends State<Dashboard> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Center(
+          child: IconButton(
+            iconSize: 100,
+            icon: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(state.profilePicture),
+            ),
+            onPressed: () {
+              context.router.pushNamed('/user_profile');
+            },
+          ),
+        ),
+        Center(
           child: Text(
             'Steps: ${state.steps}',
           ),
@@ -57,11 +70,6 @@ class _DashboardState extends State<Dashboard> {
             'Heart Points: ${state.heartPoints}',
           ),
         ),
-        Center(
-          child: Text(
-            'Name: ${state.name}',
-          ),
-        )
       ],
     );
   }
