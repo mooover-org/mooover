@@ -12,10 +12,8 @@ class DashboardCubit extends Cubit<DashboardState> {
   Future<void> loadData() async {
     emit(const DashboardLoadingState());
     try {
-      final steps = await UserServices().getUserSteps(UserSessionServices().getUserId());
-      final heartPoints = await UserServices().getUserHeartPoints(UserSessionServices().getUserId());
-      final name = (await UserServices().getUser(UserSessionServices().getUserId())).name;
-      emit(DashboardLoadedState(steps, heartPoints, name));
+      final profilePicture = (await UserServices().getUser(UserSessionServices().getUserId())).picture;
+      emit(DashboardLoadedState(0, 0, profilePicture));
     } catch (e) {
       emit(DashboardErrorState(e.toString()));
     }

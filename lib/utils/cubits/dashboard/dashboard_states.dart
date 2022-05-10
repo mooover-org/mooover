@@ -33,12 +33,12 @@ class DashboardLoadingState extends DashboardState {
 class DashboardLoadedState extends DashboardState {
   final int steps;
   final int heartPoints;
-  final String name;
+  final String profilePicture;
 
-  const DashboardLoadedState(this.steps, this.heartPoints, this.name);
+  const DashboardLoadedState(this.steps, this.heartPoints, this.profilePicture);
 
   @override
-  List<Object> get props => [steps, heartPoints, name];
+  List<Object> get props => [steps, heartPoints, profilePicture];
 }
 
 /// The state of the [DashboardCubit] when the dashboard throws an error.
