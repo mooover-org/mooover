@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
@@ -19,8 +21,10 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     try {
       await UserSessionServices().loadLastSession();
       emit(const UserSessionValidState());
+      log('Last user session loaded');
     } catch (_) {
       emit(const UserSessionNoState());
+      log('No last user session found');
     }
   }
 
@@ -30,8 +34,10 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     try {
       await UserSessionServices().login();
       emit(const UserSessionValidState());
+      log('User session logged in');
     } catch (_) {
       emit(const UserSessionNoState());
+      log('User session login failed');
     }
   }
 
@@ -41,11 +47,14 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     try {
       await UserSessionServices().logout();
       emit(const UserSessionNoState());
+      log('User session logged out');
     } catch (_) {
       if (UserSessionServices().isLoggedIn()) {
         emit(const UserSessionValidState());
+        log('User session still logged in');
       } else {
         emit(const UserSessionNoState());
+        log('User session logout failed');
       }
     }
   }

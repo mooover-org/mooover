@@ -7,6 +7,7 @@ import 'package:mooover/utils/cubits/app_settings/app_settings_cubit.dart';
 import 'package:mooover/utils/cubits/app_settings/app_settings_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
+import 'package:mooover/widgets/error_display.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,11 +82,6 @@ class App extends StatelessWidget {
         title: 'Mooover',
         debugShowCheckedModeBanner: false,
         theme: appThemes[AppTheme.light],
-        home: const Scaffold(
-          body: Center(
-            child: Text(
-                "Oops! Something went wrong.\nPlease restart the app or try again later."),
-          ),
-        ));
+        home: const ErrorDisplay());
   }
 }

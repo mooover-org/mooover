@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_profile/user_profile_info_states.dart';
 import 'package:mooover/utils/domain/user.dart';
@@ -18,6 +20,7 @@ class UserProfileInfoCubit extends Cubit<UserProfileInfoState> {
           await UserServices().getUser(UserSessionServices().getUserId());
       emit(UserProfileInfoLoadedState(user.givenName, user.familyName,
           user.name, user.nickname, user.email, user.picture));
+      log('User profile info loaded');
     } catch (e) {
       emit(UserProfileInfoErrorState(e.toString()));
     }

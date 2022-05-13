@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/pages/home/components/dashboard.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
-import 'package:mooover/utils/services/user_session_services.dart';
+import 'package:mooover/widgets/error_display.dart';
+import 'package:mooover/widgets/loading_display.dart';
 
 /// The home page.
 ///
@@ -18,52 +20,37 @@ class HomePage extends StatelessWidget {
     return BlocConsumer<UserSessionCubit, UserSessionState>(
         bloc: BlocProvider.of<UserSessionCubit>(context),
         listener: (context, state) {
-          if (!UserSessionServices().isLoggedIn()) {
+          log('HomePage: listener: state is $state');
+          if (state is UserSessionNoState) {
+            log('HomePage: listener: not logged in');
             context.router.pushNamed('/login');
+            log('HomePage: listener: pushed login');
           }
         },
         builder: (context, state) {
-          if (state is UserSessionLoadingState) {
-            return _getLoadingDisplay();
+          if (state is UserSessionInitialState) {
+            return const LoadingDisplay();
           } else if (state is UserSessionLoadingState) {
-            return _getLoadingDisplay();
+            return const LoadingDisplay();
           } else if (state is UserSessionValidState) {
             return _getLoadedDisplay();
           } else if (state is UserSessionNoState) {
-            context.router.pushNamed('/login');
-            return _getErrorDisplay();
+            return const ErrorDisplay(
+              message: 'You are not logged in.',
+            );
           } else {
-            return _getErrorDisplay();
+            return const ErrorDisplay();
           }
         });
   }
 
-  /// This method returns the display for the home page.
+  /// Returns the loaded display.
   Widget _getLoadedDisplay() {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("MOOOVER")),
+        title: const Center(child: Text("Mooover!")),
       ),
       body: const Dashboard(),
-    );
-  }
-
-  /// This method returns the display for the loading state.
-  Widget _getLoadingDisplay() {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  /// This method returns the display for the error state.
-  Widget _getErrorDisplay() {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-            "Oops! Something went wrong.\nPlease restart the app or try again later. (Home)"),
-      ),
     );
   }
 }

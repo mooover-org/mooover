@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,53 +16,21 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UserSessionCubit, UserSessionState>(
-        bloc: BlocProvider.of<UserSessionCubit>(context),
-        listener: (context, state) {
-          if (!UserSessionServices().isLoggedIn()) {
-            context.router.pushNamed('/login');
-          }
-        },
-        builder: (context, state) {
-          if (state is UserSessionLoadingState) {
-            return _getLoadingDisplay();
-          } else if (state is UserSessionLoadingState) {
-            return _getLoadingDisplay();
-          } else if (state is UserSessionValidState) {
-            return _getLoadedDisplay();
-          } else if (state is UserSessionNoState) {
-            return _getErrorDisplay();
-          } else {
-            return _getErrorDisplay();
-          }
-        });
-  }
-
-  /// This method returns the display for the loading state.
-  Widget _getLoadingDisplay() {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  /// This method returns the display for the user profile page.
-  Widget _getLoadedDisplay() {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Center(child: Text("Profile")),
-        ),
-        body: const UserProfileInfo());
-  }
-
-  /// This method returns the display for the error state.
-  Widget _getErrorDisplay() {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-            "Oops! Something went wrong.\nPlease restart the app or try again later."),
-      ),
+    return BlocListener<UserSessionCubit, UserSessionState>(
+      bloc: BlocProvider.of<UserSessionCubit>(context),
+      listener: (context, state) {
+        // log('UserProfilePage.listener: $state');
+        // if (!UserSessionServices().isLoggedIn()) {
+        //   log('UserProfilePage.listener: not logged in');
+        //   context.router.pushNamed('/login');
+        //   log('UserProfilePage.listener: pushed login');
+        // }
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Center(child: Text("Profile")),
+          ),
+          body: const UserProfileInfo()),
     );
   }
 }

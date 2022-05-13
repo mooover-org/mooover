@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/dashboard/dashboard_states.dart';
 import 'package:mooover/utils/services/user_services.dart';
@@ -18,6 +20,7 @@ class DashboardCubit extends Cubit<DashboardState> {
           (await UserServices().getUser(UserSessionServices().getUserId()))
               .picture;
       emit(DashboardLoadedState(0, 0, profilePicture));
+      log('Dashboard loaded');
     } catch (e) {
       emit(DashboardErrorState(e.toString()));
     }

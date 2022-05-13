@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/app_settings/app_settings_states.dart';
@@ -8,7 +10,7 @@ import 'package:mooover/utils/services/app_settings_services.dart';
 /// It manages the [AppSettingsState] changes.
 class AppSettingsCubit extends Cubit<AppSettingsState> {
   AppSettingsCubit({AppSettingsState? initialState})
-      : super(initialState ?? AppSettingsInitialState()) {
+      : super(initialState ?? const AppSettingsInitialState()) {
     loadAppSettings();
   }
 
@@ -18,6 +20,7 @@ class AppSettingsCubit extends Cubit<AppSettingsState> {
     try {
       final appTheme = await AppSettingsServices().getAppTheme();
       emit(AppSettingsLoadedState(appTheme));
+      log('App settings loaded.');
     } catch (e) {
       emit(AppSettingsErrorState(e.toString()));
     }
@@ -31,6 +34,7 @@ class AppSettingsCubit extends Cubit<AppSettingsState> {
     try {
       await AppSettingsServices().setAppTheme(appTheme);
       emit(AppSettingsLoadedState(appTheme));
+      log('App settings changed.');
     } catch (e) {
       emit(AppSettingsErrorState(e.toString()));
     }

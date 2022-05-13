@@ -63,7 +63,6 @@ class UserSessionServices {
         log("got null response when refreshing tokens");
         throw LoginException();
       }
-      log("got ${response.toString()}");
       idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
@@ -101,7 +100,6 @@ class UserSessionServices {
         log("got null response when logging in");
         throw LoginException();
       }
-      log("got ${response.toString()}");
       idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
@@ -138,6 +136,7 @@ class UserSessionServices {
   Future<void> logout() async {
     try {
       await _secureStorage.delete(key: AppConfig().refreshTokenKey);
+      accessToken = null;
       await http.get(
         Uri.https(
           AppConfig().auth0Domain,
