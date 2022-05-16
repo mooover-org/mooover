@@ -46,23 +46,19 @@ class AppSettingsForm extends StatelessWidget {
                 'App theme: ',
                 textAlign: TextAlign.start,
               ),
-              DropdownButton<String>(
+              DropdownButton(
                 value: state.appTheme.toString(),
-                icon: const Icon(Icons.arrow_drop_down),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    BlocProvider.of<AppSettingsCubit>(context).changeTheme(
-                        AppTheme.values.firstWhere(
-                            (element) => element.toString() == newValue,
-                            orElse: () => AppTheme.light));
+                    BlocProvider.of<AppSettingsCubit>(context)
+                        .changeTheme(appThemeFromString(newValue));
                   }
                 },
-                items: AppTheme.values.map<String>((AppTheme appTheme) {
-                  return appTheme.toString();
-                }).map<DropdownMenuItem<String>>((String value) {
+                items: AppTheme.values
+                    .map<DropdownMenuItem<String>>((AppTheme appTheme) {
                   return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+                    value: appThemeToString(appTheme),
+                    child: Text(appThemeToString(appTheme)),
                   );
                 }).toList(),
               ),

@@ -45,7 +45,7 @@ class AppConfig {
   static void _fromJson(json) {
     _instance.bundleIdentifier = json["app"]["bundleIdentifier"];
     _instance.initialAppTheme =
-        stringToAppTheme(json["app"]["initialAppTheme"]);
+        appThemeFromString(json["app"]["initialAppTheme"]);
     _instance.userServicesUrl = json["api"]["userServicesUrl"];
     _instance.auth0Domain = json["auth0"]["domain"];
     _instance.auth0ClientId = json["auth0"]["clientId"];

@@ -1,18 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Converts a theme name to an app theme
-AppTheme stringToAppTheme(String themeName) {
-  switch (themeName) {
-    case 'dark':
-      return AppTheme.dark;
-    case 'light':
-      return AppTheme.light;
-    default:
-      return AppTheme.light;
-  }
-}
-
-/// Converts an app theme to a theme name
+/// Converts an app theme to a string
 String appThemeToString(AppTheme appTheme) {
   switch (appTheme) {
     case AppTheme.dark:
@@ -21,6 +9,18 @@ String appThemeToString(AppTheme appTheme) {
       return 'light';
     default:
       return 'light';
+  }
+}
+
+/// Converts a string to an app theme
+AppTheme appThemeFromString(String themeName) {
+  switch (themeName) {
+    case 'dark':
+      return AppTheme.dark;
+    case 'light':
+      return AppTheme.light;
+    default:
+      return AppTheme.light;
   }
 }
 
@@ -35,15 +35,11 @@ final appThemes = {
   AppTheme.light: ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.deepPurpleAccent,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.deepPurpleAccent
-    ),
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurpleAccent),
   ),
   AppTheme.dark: ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.deepPurple,
-    appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.deepPurple
-    ),
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurple),
   ),
 };

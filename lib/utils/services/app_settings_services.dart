@@ -8,17 +8,20 @@ class AppSettingsServices {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   AppSettingsServices._();
+
   factory AppSettingsServices() => _instance;
 
   Future<void> setAppTheme(AppTheme appTheme) async {
-    await _secureStorage.write(key: AppConfig().appThemeKey, value: appThemeToString(appTheme));
+    await _secureStorage.write(
+        key: AppConfig().appThemeKey, value: appThemeToString(appTheme));
   }
 
   Future<AppTheme> getAppTheme() async {
-    final appThemeString = await _secureStorage.read(key: AppConfig().appThemeKey);
+    final appThemeString =
+        await _secureStorage.read(key: AppConfig().appThemeKey);
     if (appThemeString == null) {
       return AppTheme.light;
     }
-    return stringToAppTheme(appThemeString);
+    return appThemeFromString(appThemeString);
   }
 }
