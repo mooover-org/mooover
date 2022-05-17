@@ -6,6 +6,7 @@ import 'package:mooover/utils/cubits/app_settings/app_settings_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
+import 'package:mooover/widgets/panel.dart';
 
 /// A form to set the app settings.
 class AppSettingsForm extends StatelessWidget {
@@ -33,49 +34,48 @@ class AppSettingsForm extends StatelessWidget {
 
   /// This method returns the display for the app settings form.
   Widget _getLoadedDisplay(BuildContext context, AppSettingsLoadedState state) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Text(
-                'App theme: ',
-                textAlign: TextAlign.start,
-              ),
-              DropdownButton(
-                value: state.appTheme.toString(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    BlocProvider.of<AppSettingsCubit>(context)
-                        .changeTheme(appThemeFromString(newValue));
-                  }
-                },
-                items: AppTheme.values
-                    .map<DropdownMenuItem<String>>((AppTheme appTheme) {
-                  return DropdownMenuItem<String>(
-                    value: appThemeToString(appTheme),
-                    child: Text(appThemeToString(appTheme)),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
+    return Panel(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Text(
+                  'App theme:',
+                  textAlign: TextAlign.start,
+                ),
+                DropdownButton(
+                  value: appThemeToString(state.appTheme),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      BlocProvider.of<AppSettingsCubit>(context)
+                          .changeTheme(appThemeFromString(newValue));
+                    }
+                  },
+                  items: AppTheme.values
+                      .map<DropdownMenuItem<String>>((AppTheme appTheme) {
+                    return DropdownMenuItem<String>(
+                      value: appThemeToString(appTheme),
+                      child: Text(appThemeToString(appTheme)),
+                    );
+                  }).toList(),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+              ],
+            ),
+            OutlinedButton(
+                child: const Text(
+                  'Log out',
+                  textAlign: TextAlign.center,
+                ),
+                onPressed: () =>
+                    BlocProvider.of<UserSessionCubit>(context).logout()),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextButton(
-              child: const Text(
-                'Log out',
-                textAlign: TextAlign.center,
-              ),
-              onPressed: () =>
-                  BlocProvider.of<UserSessionCubit>(context).logout()),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -8,21 +8,23 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Text(
-          "Welcome!\nWe are happy to have you here.",
-          textAlign: TextAlign.center,
-        ),
-        TextButton(
-            onPressed: () => context.read<UserSessionCubit>().login(),
-            child: const Text(
-              "Get started",
-              textAlign: TextAlign.center,
-            )),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "Welcome!\nWe are happy to have you here.",
+            textAlign: TextAlign.center,
+          ),
+          TextButton(
+              onPressed: () => context.read<UserSessionCubit>().login(),
+              child: const Text(
+                "Get started",
+                textAlign: TextAlign.center,
+              )),
+        ],
+      ),
     );
   }
 }

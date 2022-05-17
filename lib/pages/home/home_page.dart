@@ -48,7 +48,8 @@ class HomePage extends StatelessWidget {
   Widget _getLoadedDisplay() {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Mooover!")),
+        title: const Text("Mooover!"),
+        centerTitle: true,
       ),
       body: const Dashboard(),
     );

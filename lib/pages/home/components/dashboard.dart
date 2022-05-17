@@ -35,12 +35,12 @@ class Dashboard extends StatelessWidget {
 
   /// This method returns the display for the dashboard.
   Widget _getLoadedDisplay(BuildContext context, DashboardLoadedState state) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Center(
-          child: IconButton(
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IconButton(
             iconSize: 100,
             icon: CircleAvatar(
               radius: 100,
@@ -50,18 +50,16 @@ class Dashboard extends StatelessWidget {
               context.router.pushNamed('/user_profile');
             },
           ),
-        ),
-        Center(
-          child: Text(
+          Text(
             'Steps: ${state.steps}',
+            textAlign: TextAlign.center,
           ),
-        ),
-        Center(
-          child: Text(
+          Text(
             'Heart Points: ${state.heartPoints}',
+            textAlign: TextAlign.center,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

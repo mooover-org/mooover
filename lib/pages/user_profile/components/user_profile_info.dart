@@ -33,33 +33,28 @@ class UserProfileInfo extends StatelessWidget {
   /// This method returns the display for the profile info.
   Widget _getLoadedDisplay(
       BuildContext context, UserProfileInfoLoadedState state) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: CircleAvatar(
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          CircleAvatar(
             radius: 100,
             backgroundImage: NetworkImage(state.picture),
           ),
-        ),
-        Center(
-          child: Text(
+          Text(
             state.name,
+            textAlign: TextAlign.center,
           ),
-        ),
-        Center(
-          child: Text(
+          Text(
             state.nickname,
+            textAlign: TextAlign.center,
           ),
-        ),
-        Center(
-          child: Text(
+          Text(
             state.email,
+            textAlign: TextAlign.center,
           ),
-        ),
-        Center(
-          child: IconButton(
+          IconButton(
             iconSize: 50,
             icon: const Icon(
               Icons.settings,
@@ -69,8 +64,8 @@ class UserProfileInfo extends StatelessWidget {
               context.router.pushNamed('/settings');
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mooover/pages/settings/components/app_settings_form.dart';
+import 'package:mooover/pages/settings/components/user_settings_form.dart';
 
 /// The settings page.
 ///
@@ -11,15 +12,12 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("Settings")),
+        title: const Text("Settings"),
+        centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          AppSettingsForm(),
-        ],
-      ),
+      body: ListView(
+          padding: const EdgeInsets.all(10),
+          children: const [AppSettingsForm(), UserSettingsForm()]),
     );
   }
 }

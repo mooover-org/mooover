@@ -49,12 +49,9 @@ class LoginPage extends StatelessWidget {
   Widget _getLoadedDisplay() {
     return Scaffold(
       appBar: AppBar(
-        leading: Container(),
-        title: const Text(
-          "Hello!",
-          textAlign: TextAlign.center,
-        ),
-        actions: const [],
+        automaticallyImplyLeading: false,
+        title: const Text("Hello!"),
+        centerTitle: true,
       ),
       body: const LoginForm(),
     );
