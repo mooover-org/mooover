@@ -58,4 +58,8 @@ class UserSessionCubit extends Cubit<UserSessionState> {
       }
     }
   }
+
+  Future<void> refresh() async {
+    emit(const UserSessionNoState());
+  }
 }

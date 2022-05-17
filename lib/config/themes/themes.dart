@@ -63,6 +63,9 @@ final appThemes = {
         backgroundColor: Colors.deepPurpleAccent,
       ),
     ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: Colors.deepPurpleAccent,
+    ),
   ),
   AppTheme.dark: ThemeData(
     brightness: Brightness.dark,
@@ -92,6 +95,9 @@ final appThemes = {
       style: OutlinedButton.styleFrom(
         primary: Colors.white,
       ),
+    ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: Colors.deepPurple,
     ),
   ),
 };

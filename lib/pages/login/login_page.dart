@@ -24,7 +24,7 @@ class LoginPage extends StatelessWidget {
           log('LoginPage: listener: state is $state');
           if (state is UserSessionValidState) {
             log('LoginPage: listener: logged in');
-            context.router.pop();
+            context.router.popUntilRoot();
             log('LoginPage: listener: popped');
           }
         },

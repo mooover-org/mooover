@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mooover/utils/domain/exceptions.dart';
 import 'package:mooover/utils/domain/id_token.dart';
+import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 
@@ -104,26 +105,30 @@ class UserSessionServices {
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
       try {
-        final userInfo = jsonDecode((await httpClient
-                .get("${AppConfig().auth0Issuer}/userinfo".toUri()))
-            .body);
-        await httpClient.post((AppConfig().userServicesUrl + "/").toUri(),
-            body: jsonEncode({
-              "id": idToken!.userId,
-              "name": userInfo["name"] as String,
-              "given_name": userInfo["given_name"] as String,
-              "family_name": userInfo["family_name"] as String,
-              "nickname": userInfo["nickname"] as String,
-              "email": userInfo["email"] as String,
-              "picture": userInfo["picture"] as String,
-            }),
-            headers: {"Content-Type": "application/json"});
-      } catch (e) {
-        log(e.toString());
+        final registeredUserResponse = await httpClient.get("${AppConfig().userServicesUrl}/${idToken!.userId}".toUri());
+        if (registeredUserResponse.statusCode == 404) {
+          await registerNewUser();
+        }
+      } on http.ClientException {
+        throw LoginException();
       }
-      return;
     } catch (e) {
-      log("Error: ${e.toString()}");
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  /// Performs a register user action.
+  Future<void> registerNewUser() async {
+    try {
+      User newUser = User.fromUserInfo(jsonDecode((await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body));
+      final response = await httpClient.post((AppConfig().userServicesUrl + "/").toUri(),
+          body: jsonEncode(newUser.toJson()),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw LoginException(message: "could not register user");
+      }
+    } catch (e) {
       throw LoginException(message: e.toString());
     }
   }

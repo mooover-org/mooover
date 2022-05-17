@@ -17,7 +17,7 @@ class LoginForm extends StatelessWidget {
             "Welcome!\nWe are happy to have you here.",
             textAlign: TextAlign.center,
           ),
-          TextButton(
+          OutlinedButton(
               onPressed: () => context.read<UserSessionCubit>().login(),
               child: const Text(
                 "Get started",
