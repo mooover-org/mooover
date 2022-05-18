@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 
 /// The error display widget.
 ///
 /// This widget is used to display an error message on the screen.
 class ErrorDisplay extends StatelessWidget {
   final String message;
+  final bool transparent;
 
-  const ErrorDisplay({Key? key, this.message = "Something bad happened."})
+  const ErrorDisplay(
+      {Key? key,
+      this.message = "Something bad happened.",
+      this.transparent = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return Container(
+      color: transparent ? null : Theme.of(context).backgroundColor,
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,7 +27,7 @@ class ErrorDisplay extends StatelessWidget {
               child: Text(
                 "Whoops!",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             Padding(
@@ -32,23 +35,15 @@ class ErrorDisplay extends StatelessWidget {
               child: Text(
                 message,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: Text(
-                "Restart the app, try again later or...",
+                "Restart the app or try again later",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.caption,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: OutlinedButton(
-                onPressed: () =>
-                    BlocProvider.of<UserSessionCubit>(context).logout(),
-                child: const Text("Log out"),
               ),
             ),
           ],

@@ -1,18 +1,18 @@
 class AppException implements Exception {
   final String message;
 
-  const AppException(this.message);
+  const AppException({this.message = "Something bad happened."});
 
   @override
   String toString() {
-    return 'Error: $message';
+    return message;
   }
 }
 
 class LoginException extends AppException {
-  LoginException({String message = "login error"}) : super(message);
+  LoginException({String message = "Something happened while trying to login."}) : super(message: message);
 }
 
 class LogoutException extends AppException {
-  LogoutException({String message = "logout error"}) : super(message);
+  LogoutException({String message = "Something happened while trying to logout."}) : super(message: message);
 }

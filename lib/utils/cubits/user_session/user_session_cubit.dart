@@ -8,11 +8,9 @@ import 'package:mooover/utils/services/user_session_services.dart';
 ///
 /// It manages the [UserSessionState] changes.
 class UserSessionCubit extends Cubit<UserSessionState> {
-  UserSessionCubit({initialState})
-      : super(initialState ?? const UserSessionInitialState()) {
-    if (!UserSessionServices().isLoggedIn()) {
-      loadLastSession();
-    }
+  UserSessionCubit({UserSessionState initialState = const UserSessionNoState()})
+      : super(initialState) {
+    loadLastSession();
   }
 
   /// Performs a last session loading action.
@@ -20,7 +18,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().loadLastSession();
-      emit(const UserSessionValidState());
+      emit(const UserSessionLoadedState());
       log('Last user session loaded');
     } catch (_) {
       emit(const UserSessionNoState());
@@ -33,7 +31,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
     emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().login();
-      emit(const UserSessionValidState());
+      emit(const UserSessionLoadedState());
       log('User session logged in');
     } catch (_) {
       emit(const UserSessionNoState());
@@ -50,7 +48,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
       log('User session logged out');
     } catch (_) {
       if (UserSessionServices().isLoggedIn()) {
-        emit(const UserSessionValidState());
+        emit(const UserSessionLoadedState());
         log('User session still logged in');
       } else {
         emit(const UserSessionNoState());

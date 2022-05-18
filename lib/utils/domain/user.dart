@@ -1,3 +1,5 @@
+import 'package:mooover/config/themes/themes.dart';
+
 /// The user model.
 class User {
   String userId;
@@ -9,9 +11,10 @@ class User {
   String picture;
   int steps;
   int dailyStepsGoal;
+  AppTheme appTheme;
 
   User(this.userId, this.givenName, this.familyName, this.name, this.nickname,
-      this.email, this.picture, this.steps, this.dailyStepsGoal);
+      this.email, this.picture, this.steps, this.dailyStepsGoal, this.appTheme);
 
   /// Creates a user from json map.
   User.fromJson(Map<String, dynamic> jsonData)
@@ -23,7 +26,8 @@ class User {
         email = jsonData['email'],
         picture = jsonData['picture'],
         steps = jsonData['steps'],
-        dailyStepsGoal = jsonData['daily_steps_goal'];
+        dailyStepsGoal = jsonData['daily_steps_goal'],
+        appTheme = appThemeFromString(jsonData['app_theme']);
 
   /// Creates a user from an id token.
   User.fromUserInfo(Map<String, dynamic> userInfo)
@@ -35,7 +39,8 @@ class User {
         email = userInfo['email'],
         picture = userInfo['picture'],
         steps = 0,
-        dailyStepsGoal = 0;
+        dailyStepsGoal = 0,
+        appTheme = AppTheme.light;
 
   /// Creates a json map from the user.
   Map<String, dynamic> toJson() => {
@@ -48,5 +53,6 @@ class User {
         'picture': picture,
         'steps': steps,
         'daily_steps_goal': dailyStepsGoal,
+        'app_theme': appThemeToString(appTheme),
       };
 }

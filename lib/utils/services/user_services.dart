@@ -44,4 +44,12 @@ class UserServices {
     log('Got user heart points: $heartPoints');
     return int.parse(heartPoints);
   }
+
+  Future<void> updateUser(User user) async {
+    await httpClient.put(
+        (AppConfig().userServicesUrl + '/${user.userId}').toUri(),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(user.toJson()));
+    log('Modified user: ${user.userId}');
+  }
 }

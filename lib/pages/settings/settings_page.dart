@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mooover/pages/settings/components/app_settings_form.dart';
 import 'package:mooover/pages/settings/components/user_settings_form.dart';
 
 /// The settings page.
@@ -17,7 +16,7 @@ class SettingsPage extends StatelessWidget {
       ),
       body: ListView(
           padding: const EdgeInsets.all(10),
-          children: const [AppSettingsForm(), UserSettingsForm()]),
+          children: const [UserSettingsForm()]),
     );
   }
 }

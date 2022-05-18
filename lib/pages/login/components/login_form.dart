@@ -18,7 +18,8 @@ class LoginForm extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           OutlinedButton(
-              onPressed: () => context.read<UserSessionCubit>().login(),
+              onPressed: () =>
+                  BlocProvider.of<UserSessionCubit>(context).login(),
               child: const Text(
                 "Get started",
                 textAlign: TextAlign.center,

@@ -162,6 +162,9 @@ class UserSessionServices {
   }
 
   String getUserId() {
+    if (idToken == null) {
+      throw const AppException(message: "no id token");
+    }
     return idToken!.userId;
   }
 
