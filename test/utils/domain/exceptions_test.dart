@@ -4,10 +4,10 @@ import 'package:mooover/utils/domain/exceptions.dart';
 void main() {
   group("AppException", () {
     test("is an exception and can be thrown", () async {
-      expect(() { throw const AppException("message"); }, throwsA(isA<AppException>()));
+      expect(() { throw const AppException(message: "message"); }, throwsA(isA<AppException>()));
     });
     test("gets the error message in string form", () async {
-      expect(const AppException("message").toString(), "Error: message");
+      expect(const AppException().toString(), "Something bad happened.");
     });
   });
 
@@ -16,7 +16,7 @@ void main() {
       expect(() { throw LoginException(message: "message"); }, throwsA(isA<LoginException>()));
     });
     test("gets the error message in string form", () async {
-      expect(LoginException().toString(), "Error: login error");
+      expect(LoginException().toString(), "Something happened while trying to login.");
     });
   });
 
@@ -25,7 +25,7 @@ void main() {
       expect(() { throw LogoutException(message: "message"); }, throwsA(isA<LogoutException>()));
     });
     test("gets the error message in string form", () async {
-      expect(LogoutException().toString(), "Error: logout error");
+      expect(LogoutException().toString(), "Something happened while trying to logout.");
     });
   });
 }

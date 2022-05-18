@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 
 /// [UserSessionState] is the base state of the [UserSessionCubit].
 @immutable
@@ -7,16 +8,7 @@ abstract class UserSessionState extends Equatable {
   const UserSessionState();
 }
 
-/// [UserSessionInitial] is the initial state of the [UserSessionCubit].
-@immutable
-class UserSessionInitialState extends UserSessionState {
-  const UserSessionInitialState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-/// [UserSessionLoading] is the state of the [UserSessionCubit] when it's loading.
+/// [UserSessionLoadingState] is the state of the [UserSessionCubit] when it's loading.
 @immutable
 class UserSessionLoadingState extends UserSessionState {
   const UserSessionLoadingState();
@@ -25,7 +17,16 @@ class UserSessionLoadingState extends UserSessionState {
   List<Object?> get props => [];
 }
 
-/// [UserSessionLoaded] is the state of the [UserSessionCubit] when there is no user session.
+/// [UserSessionLoadedState] is the state of the [UserSessionCubit] when it's loaded.
+@immutable
+class UserSessionLoadedState extends UserSessionState {
+  const UserSessionLoadedState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+/// [UserSessionNoState] is the state of the [UserSessionCubit] when there is no user session.
 @immutable
 class UserSessionNoState extends UserSessionState {
   const UserSessionNoState();
@@ -34,11 +35,13 @@ class UserSessionNoState extends UserSessionState {
   List<Object?> get props => [];
 }
 
-/// [UserSessionLoaded] is the state of the [UserSessionCubit] when it's loaded.
+/// [UserSessionErrorState] is the state of the [UserSessionCubit] when there is an error.
 @immutable
-class UserSessionValidState extends UserSessionState {
-  const UserSessionValidState();
+class UserSessionErrorState extends UserSessionState {
+  final String message;
+
+  const UserSessionErrorState(this.message);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [message];
 }

@@ -1,39 +1,51 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/services.dart';
+import 'package:mooover/config/themes/themes.dart';
 
 class AppConfig {
-  String bundleIdentifier = "";
-  String userServicesUrl = "";
+  static final AppConfig _instance = AppConfig._();
+
+  String bundleIdentifier = "usr.adipopbv.mooover";
+  AppTheme initialAppTheme = AppTheme.light;
+  String userServicesUrl = "http://localhost:8000/api/v1/users";
   String auth0Domain = "";
   String auth0ClientId = "";
   String auth0RedirectUrl = "";
   String auth0Issuer = "";
   String auth0Audience = "";
-  String refreshTokenKey = "";
-
-  static final AppConfig _instance = AppConfig._();
-
-  factory AppConfig() {
-    return _instance;
-  }
+  String refreshTokenKey = "refresh_token";
+  String appThemeKey = "app_theme";
 
   AppConfig._();
 
+  factory AppConfig() => _instance;
+
   static Future<void> loadForDevelopment() async {
-    final json =
-        jsonDecode(await rootBundle.loadString('assets/config/dev.json'));
-    _fromJson(json);
+    try {
+      final json =
+          jsonDecode(await rootBundle.loadString('assets/config/dev.json'));
+      _fromJson(json);
+    } catch (e) {
+      log("Error loading config for development: $e");
+    }
   }
 
   static Future<void> loadForProduction() async {
-    final json =
-        jsonDecode(await rootBundle.loadString('assets/config/prod.json'));
-    _fromJson(json);
+    try {
+      final json =
+          jsonDecode(await rootBundle.loadString('assets/config/prod.json'));
+      _fromJson(json);
+    } catch (e) {
+      log("Error loading config for production: $e");
+    }
   }
 
   static void _fromJson(json) {
     _instance.bundleIdentifier = json["app"]["bundleIdentifier"];
+    _instance.initialAppTheme =
+        appThemeFromString(json["app"]["initialAppTheme"]);
     _instance.userServicesUrl = json["api"]["userServicesUrl"];
     _instance.auth0Domain = json["auth0"]["domain"];
     _instance.auth0ClientId = json["auth0"]["clientId"];
@@ -41,5 +53,6 @@ class AppConfig {
     _instance.auth0Issuer = json["auth0"]["issuer"];
     _instance.auth0Audience = json["auth0"]["audience"];
     _instance.refreshTokenKey = json["auth0"]["refreshTokenKey"];
+    _instance.appThemeKey = json["services"]["appSettings"]["appThemeKey"];
   }
 }
