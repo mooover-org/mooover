@@ -29,8 +29,6 @@ class IdToken {
   final int exp;
   final int? authTime;
 
-  String get userId => sub.split('|')[1];
-
   factory IdToken.fromJson(Map<String, dynamic> json) {
     return IdToken(
       nickname: json["nickname"],

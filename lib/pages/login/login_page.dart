@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/pages/login/components/login_form.dart';
 import 'package:mooover/utils/cubits/app_theme/app_theme_cubit.dart';
+import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
@@ -29,6 +30,7 @@ class LoginPage extends StatelessWidget {
             log('LoginPage: listener: logged in');
             await BlocProvider.of<UserInfoCubit>(context).loadUserInfo();
             await BlocProvider.of<AppThemeCubit>(context).loadAppTheme();
+            await BlocProvider.of<GroupInfoCubit>(context).loadGroupInfo();
             log('LoginPage: listener: user info loaded');
             context.router.popUntilRoot();
             log('LoginPage: listener: popped');
@@ -36,6 +38,7 @@ class LoginPage extends StatelessWidget {
             log('LoginPage: listener: not logged in and user info loaded');
             await BlocProvider.of<UserInfoCubit>(context).removeUserInfo();
             await BlocProvider.of<AppThemeCubit>(context).removeAppTheme();
+            await BlocProvider.of<GroupInfoCubit>(context).removeGroupInfo();
             log('LoginPage: listener: user info removed');
           }
         },

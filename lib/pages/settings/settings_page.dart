@@ -15,7 +15,6 @@ class SettingsPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: ListView(
-          padding: const EdgeInsets.all(10),
           children: const [UserSettingsForm()]),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mooover/widgets/panel.dart';
 
 /// This is the leaderboard component.
 ///
@@ -8,6 +9,10 @@ class Leaderboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return const Panel(
+      child: Center(
+        child: Text('Leaderboard'),
+      ),
+    );
   }
 }

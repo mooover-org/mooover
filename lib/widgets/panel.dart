@@ -8,7 +8,6 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: Theme.of(context).cardTheme.margin,
       shape: Theme.of(context).cardTheme.shape,
       child: Padding(
         padding: const EdgeInsets.all(10),

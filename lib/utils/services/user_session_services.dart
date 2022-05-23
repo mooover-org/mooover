@@ -105,7 +105,7 @@ class UserSessionServices {
       accessToken = response.accessToken;
       await setRefreshToken(response.refreshToken);
       try {
-        final registeredUserResponse = await httpClient.get("${AppConfig().userServicesUrl}/${idToken!.userId}".toUri());
+        final registeredUserResponse = await httpClient.get("${AppConfig().userServicesUrl}/${idToken!.sub}".toUri());
         if (registeredUserResponse.statusCode == 404) {
           await registerNewUser();
         }
@@ -121,9 +121,17 @@ class UserSessionServices {
   /// Performs a register user action.
   Future<void> registerNewUser() async {
     try {
-      User newUser = User.fromUserInfo(jsonDecode((await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body));
-      final response = await httpClient.post((AppConfig().userServicesUrl + "/").toUri(),
-          body: jsonEncode(newUser.toJson()),
+      final userInfo = jsonDecode((await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body);
+      final response = await httpClient.post((AppConfig().userServicesUrl).toUri(),
+          body: jsonEncode({
+            "sub": userInfo["sub"],
+            "name": userInfo["name"],
+            "given_name": userInfo["given_name"],
+            "family_name": userInfo["family_name"],
+            "nickname": userInfo["nickname"],
+            "email": userInfo["email"],
+            "picture": userInfo["picture"],
+          }),
           headers: {"Content-Type": "application/json"});
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw LoginException(message: "could not register user");
@@ -165,7 +173,7 @@ class UserSessionServices {
     if (idToken == null) {
       throw const AppException(message: "no id token");
     }
-    return idToken!.userId;
+    return idToken!.sub;
   }
 
   bool isLoggedIn() {

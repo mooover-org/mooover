@@ -9,7 +9,9 @@ class AppConfig {
 
   String bundleIdentifier = "usr.adipopbv.mooover";
   AppTheme initialAppTheme = AppTheme.light;
+  String baseUrl = "http://localhost:8000/api/v1";
   String userServicesUrl = "http://localhost:8000/api/v1/users";
+  String groupServicesUrl = "http://localhost:8000/api/v1/groups";
   String auth0Domain = "";
   String auth0ClientId = "";
   String auth0RedirectUrl = "";
@@ -46,7 +48,9 @@ class AppConfig {
     _instance.bundleIdentifier = json["app"]["bundleIdentifier"];
     _instance.initialAppTheme =
         appThemeFromString(json["app"]["initialAppTheme"]);
+    _instance.baseUrl = json["api"]["baseUrl"];
     _instance.userServicesUrl = json["api"]["userServicesUrl"];
+    _instance.groupServicesUrl = json["api"]["groupServicesUrl"];
     _instance.auth0Domain = json["auth0"]["domain"];
     _instance.auth0ClientId = json["auth0"]["clientId"];
     _instance.auth0RedirectUrl = json["auth0"]["redirectUrl"];
