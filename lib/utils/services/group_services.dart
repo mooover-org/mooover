@@ -39,12 +39,13 @@ class GroupServices {
   /// Gets multiple groups, with or without a filter applied
   Future<List<Group>> getGroups({String nicknameFilter = ""}) async {
     if (nicknameFilter.isEmpty) {
-      final groups = jsonDecode((await httpClient.get(
+      final List<Group> groups = jsonDecode((await httpClient.get(
                   (AppConfig().groupServicesUrl).toUri(),
                   headers: {'Content-Type': 'application/json'}))
               .body)
           .map<Group>((group) => Group.fromJson(group))
           .toList();
+      groups.sort((a, b) => a.steps - b.steps);
       log('Got groups: $groups');
       return groups;
     } else {

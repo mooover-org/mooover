@@ -27,11 +27,18 @@ class Dashboard extends StatelessWidget {
               ),
             );
           } else if (state is UserInfoLoadingState) {
-            return const LoadingDisplay(transparent: true,);
+            return const LoadingDisplay(
+              transparent: true,
+            );
           } else if (state is UserInfoErrorState) {
-            return ErrorDisplay(message: state.message, transparent: true,);
+            return ErrorDisplay(
+              message: state.message,
+              transparent: true,
+            );
           } else {
-            return const ErrorDisplay(transparent: true,);
+            return const ErrorDisplay(
+              transparent: true,
+            );
           }
         },
       ),

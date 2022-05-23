@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_states.dart';
 import 'package:mooover/utils/domain/group.dart';
-import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
@@ -17,11 +16,12 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
   Future<void> loadGroupInfo() async {
     emit(const GroupInfoLoadingState());
     try {
-      Group? group = await UserServices()
+      final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
-        List<User> members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(group, members));
+        final groups = await GroupServices().getGroups();
+        final members = await GroupServices().getMembersOfGroup(group.id);
+        emit(GroupInfoLoadedState(groups, group, members));
         log('Group info loaded');
       } else {
         List<Group> groups = await GroupServices().getGroups();
@@ -49,13 +49,14 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
   Future<void> changeDailyStepsGoal(int newDailyStepsGoal) async {
     emit(const GroupInfoLoadingState());
     try {
-      Group? group = await UserServices()
+      final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
         group.dailyStepsGoal = newDailyStepsGoal;
         await GroupServices().updateGroup(group);
-        List<User> members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(group, members));
+        final groups = await GroupServices().getGroups();
+        final members = await GroupServices().getMembersOfGroup(group.id);
+        emit(GroupInfoLoadedState(groups, group, members));
         log('Group daily steps goal changed');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
@@ -69,13 +70,14 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
   Future<void> changeWeeklyStepsGoal(int newWeeklyStepsGoal) async {
     emit(const GroupInfoLoadingState());
     try {
-      Group? group = await UserServices()
+      final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
         group.weeklyStepsGoal = newWeeklyStepsGoal;
         await GroupServices().updateGroup(group);
-        List<User> members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(group, members));
+        final groups = await GroupServices().getGroups();
+        final members = await GroupServices().getMembersOfGroup(group.id);
+        emit(GroupInfoLoadedState(groups, group, members));
         log('Group weekly steps goal changed');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
@@ -97,30 +99,34 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
     }
   }
 
+  /// This method is used to create a new group.
   Future<void> createGroup(String nickname, String name) async {
     emit(const GroupInfoLoadingState());
     try {
       await GroupServices()
           .createGroup(UserSessionServices().getUserId(), nickname, name);
-      Group? group = await UserServices()
+      final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
-      List<User> members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(group, members));
+      final groups = await GroupServices().getGroups();
+      final members = await GroupServices().getMembersOfGroup(group!.id);
+      emit(GroupInfoLoadedState(groups, group, members));
       log('Group created');
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
     }
   }
 
+  /// This method is used to join a group.
   Future<void> joinGroup(String nickname) async {
     emit(const GroupInfoLoadingState());
     try {
       await GroupServices()
           .addMemberToGroup(UserSessionServices().getUserId(), nickname);
-      Group? group = await UserServices()
+      final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
-      List<User> members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(group, members));
+      final groups = await GroupServices().getGroups();
+      final members = await GroupServices().getMembersOfGroup(group!.id);
+      emit(GroupInfoLoadedState(groups, group, members));
       log('Group joined');
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));

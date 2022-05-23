@@ -18,7 +18,6 @@ class AppConfig {
   String auth0Issuer = "";
   String auth0Audience = "";
   String refreshTokenKey = "refresh_token";
-  String appThemeKey = "app_theme";
 
   AppConfig._();
 
@@ -57,6 +56,5 @@ class AppConfig {
     _instance.auth0Issuer = json["auth0"]["issuer"];
     _instance.auth0Audience = json["auth0"]["audience"];
     _instance.refreshTokenKey = json["auth0"]["refreshTokenKey"];
-    _instance.appThemeKey = json["services"]["appSettings"]["appThemeKey"];
   }
 }

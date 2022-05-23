@@ -85,24 +85,9 @@ class HomePage extends StatelessWidget {
                 ],
               ),
               body: Column(
-                children: [
-                  const Expanded(child: Dashboard()),
-                  BlocBuilder<GroupInfoCubit, GroupInfoState>(
-                      bloc: BlocProvider.of<GroupInfoCubit>(context),
-                      builder: (context, state) {
-                        if (state is GroupInfoLoadedState) {
-                          return const Expanded(child: Leaderboard());
-                        } else if (state is GroupInfoLoadingState) {
-                          return const Expanded(
-                              child: Panel(
-                            child: LoadingDisplay(
-                              transparent: true,
-                            ),
-                          ));
-                        } else {
-                          return Container();
-                        }
-                      }),
+                children: const [
+                  Expanded(child: Dashboard()),
+                  Expanded(child: Leaderboard())
                 ],
               ),
             );

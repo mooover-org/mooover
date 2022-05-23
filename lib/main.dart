@@ -5,7 +5,6 @@ import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
-import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 

@@ -33,12 +33,24 @@ class AppRouter extends _i6.RootStackRouter {
           routeData: routeData, child: const _i2.LoginPage());
     },
     ProfilePageRoute.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
-          routeData: routeData, child: const _i3.ProfilePage());
+      return _i6.CustomPage<dynamic>(
+          routeData: routeData,
+          child: const _i3.ProfilePage(),
+          transitionsBuilder: _i6.TransitionsBuilders.slideLeftWithFade,
+          durationInMilliseconds: 300,
+          reverseDurationInMilliseconds: 300,
+          opaque: true,
+          barrierDismissible: false);
     },
     GroupPageRoute.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
-          routeData: routeData, child: const _i4.GroupPage());
+      return _i6.CustomPage<dynamic>(
+          routeData: routeData,
+          child: const _i4.GroupPage(),
+          transitionsBuilder: _i6.TransitionsBuilders.slideRightWithFade,
+          durationInMilliseconds: 300,
+          reverseDurationInMilliseconds: 300,
+          opaque: true,
+          barrierDismissible: false);
     },
     SettingsPageRoute.name: (routeData) {
       return _i6.AdaptivePage<dynamic>(

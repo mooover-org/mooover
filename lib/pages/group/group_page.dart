@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/pages/group/components/group_actions_bar.dart';
@@ -44,7 +45,10 @@ class GroupPage extends StatelessWidget {
                               child: ListTile(
                                 title: Text(group.name),
                                 subtitle: Text(group.nickname),
-                                leading: const Icon(Icons.group),
+                                leading: const Icon(
+                                  Icons.group,
+                                  size: 50,
+                                ),
                                 trailing: TextButton(
                                   onPressed: () =>
                                       BlocProvider.of<GroupInfoCubit>(context)
@@ -69,6 +73,13 @@ class GroupPage extends StatelessWidget {
             appBar: AppBar(
               title: const Text("Group"),
               centerTitle: true,
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: () => AutoRouter.of(context).pop(),
+                ),
+              ],
             ),
             body: Column(
               children: [
@@ -85,6 +96,7 @@ class GroupPage extends StatelessWidget {
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(member.picture),
                         ),
+                        trailing: Text("Steps: ${member.steps.toString()}"),
                       ),
                     );
                   },

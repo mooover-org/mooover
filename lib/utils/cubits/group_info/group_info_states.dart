@@ -25,13 +25,14 @@ class GroupInfoLoadingState extends GroupInfoState {
 /// The loaded state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadedState extends GroupInfoState {
+  final List<Group> groups;
   final Group group;
   final List<User> members;
 
-  const GroupInfoLoadedState(this.group, this.members);
+  const GroupInfoLoadedState(this.groups, this.group, this.members);
 
   @override
-  List<Object> get props => [group, members];
+  List<Object> get props => [groups, group, members];
 }
 
 /// The no state of the [GroupInfoCubit]
