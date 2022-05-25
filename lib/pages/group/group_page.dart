@@ -26,6 +26,13 @@ class GroupPage extends StatelessWidget {
             appBar: AppBar(
               title: const Text("Groups"),
               centerTitle: true,
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: () => AutoRouter.of(context).pop(),
+                ),
+              ],
             ),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.start,

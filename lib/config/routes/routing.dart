@@ -13,14 +13,14 @@ import 'package:mooover/pages/settings/settings_page.dart';
       page: ProfilePage,
       path: "/profile",
       transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
-      durationInMilliseconds: 300,
-      reverseDurationInMilliseconds: 300),
+      durationInMilliseconds: 200,
+      reverseDurationInMilliseconds: 200),
   CustomRoute(
       page: GroupPage,
       path: "/group",
       transitionsBuilder: TransitionsBuilders.slideRightWithFade,
-      durationInMilliseconds: 300,
-      reverseDurationInMilliseconds: 300),
+      durationInMilliseconds: 200,
+      reverseDurationInMilliseconds: 200),
   AutoRoute(page: SettingsPage, path: "/settings"),
 ])
 class $AppRouter {}

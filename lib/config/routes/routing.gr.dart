@@ -37,8 +37,8 @@ class AppRouter extends _i6.RootStackRouter {
           routeData: routeData,
           child: const _i3.ProfilePage(),
           transitionsBuilder: _i6.TransitionsBuilders.slideLeftWithFade,
-          durationInMilliseconds: 300,
-          reverseDurationInMilliseconds: 300,
+          durationInMilliseconds: 200,
+          reverseDurationInMilliseconds: 200,
           opaque: true,
           barrierDismissible: false);
     },
@@ -47,8 +47,8 @@ class AppRouter extends _i6.RootStackRouter {
           routeData: routeData,
           child: const _i4.GroupPage(),
           transitionsBuilder: _i6.TransitionsBuilders.slideRightWithFade,
-          durationInMilliseconds: 300,
-          reverseDurationInMilliseconds: 300,
+          durationInMilliseconds: 200,
+          reverseDurationInMilliseconds: 200,
           opaque: true,
           barrierDismissible: false);
     },
