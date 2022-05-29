@@ -43,7 +43,7 @@ class AppThemeCubit extends Cubit<AppThemeState> {
       user.appTheme = newAppTheme;
       await UserServices().updateUser(user);
       emit(AppThemeLoadedState(newAppTheme));
-      log('App theme changed for user ${user.userId}');
+      log('App theme changed for user ${user.id}');
     } catch (e) {
       emit(AppThemeErrorState(e.toString()));
     }

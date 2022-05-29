@@ -53,8 +53,7 @@ final appThemes = {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        primary: Colors.white,
-        backgroundColor: Colors.deepPurpleAccent,
+        primary: Colors.black,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -63,9 +62,10 @@ final appThemes = {
         backgroundColor: Colors.deepPurpleAccent,
       ),
     ),
-    iconTheme: const IconThemeData(
-        color: Colors.white
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: Colors.deepPurpleAccent,
     ),
+    iconTheme: const IconThemeData(color: Colors.white),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Colors.deepPurpleAccent,
     ),
@@ -99,9 +99,10 @@ final appThemes = {
         primary: Colors.white,
       ),
     ),
-    iconTheme: const IconThemeData(
-      color: Colors.white
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: Colors.deepPurple,
     ),
+    iconTheme: const IconThemeData(color: Colors.white),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Colors.deepPurple,
     ),
