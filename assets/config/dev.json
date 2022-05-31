@@ -2,7 +2,8 @@
   "api": {
     "baseUrl": "http://192.168.1.8:8000/api/v1",
     "userServicesUrl": "http://192.168.1.8:8000/api/v1/users",
-    "groupServicesUrl": "http://192.168.1.8:8000/api/v1/groups"
+    "groupServicesUrl": "http://192.168.1.8:8000/api/v1/groups",
+    "stepsServicesUrl": "http://192.168.1.8:8000/api/v1/steps"
   },
   "auth0": {
     "domain": "dev-ed4pmqgq.eu.auth0.com",
@@ -14,6 +15,7 @@
   },
   "app": {
     "bundleIdentifier": "usr.adipopbv.mooover",
-    "initialAppTheme": "light"
+    "initialAppTheme": "light",
+    "lastStepsCountKey": "last_steps_count"
   }
 }

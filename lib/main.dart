@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
+import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
@@ -35,11 +36,15 @@ class _AppState extends State<App> {
   final _router = AppRouter();
   final _appThemeCubit = AppThemeCubit();
   final _userStepsCubit = UserStepsCubit();
+  final _groupStepsCubit = GroupStepsCubit();
 
   @override
   void initState() {
     super.initState();
-    StepsServices(hotReloadCallback: _userStepsCubit.hotReloadStepsData);
+    StepsServices(hotReloadCallback: () {
+      _userStepsCubit.hotReloadStepsData();
+      _groupStepsCubit.hotReloadStepsData();
+    });
   }
 
   @override
@@ -57,6 +62,9 @@ class _AppState extends State<App> {
         ),
         BlocProvider(
           create: (_) => GroupInfoCubit(),
+        ),
+        BlocProvider(
+          create: (_) => _groupStepsCubit,
         ),
         BlocProvider(
           create: (_) => _appThemeCubit,
