@@ -1,29 +1,32 @@
 class Group {
   String nickname;
   String name;
-  int steps;
+  int todaySteps;
   int dailyStepsGoal;
+  int thisWeekSteps;
   int weeklyStepsGoal;
 
   get id => nickname;
 
-  Group(this.nickname, this.name,
-      this.steps, this.dailyStepsGoal, this.weeklyStepsGoal);
+  Group(this.nickname, this.name, this.todaySteps, this.dailyStepsGoal,
+      this.thisWeekSteps, this.weeklyStepsGoal);
 
   /// Creates a group from json map.
   Group.fromJson(Map<String, dynamic> jsonData)
       : nickname = jsonData['nickname'],
         name = jsonData['name'],
-        steps = jsonData['steps'],
+        todaySteps = jsonData['today_steps'],
         dailyStepsGoal = jsonData['daily_steps_goal'],
+        thisWeekSteps = jsonData['this_week_steps'],
         weeklyStepsGoal = jsonData['weekly_steps_goal'];
 
   /// Creates a json map from the group.
   Map<String, dynamic> toJson() => {
-    'nickname': nickname,
-    'name': name,
-    'steps': steps,
-    'daily_steps_goal': dailyStepsGoal,
-    'weekly_steps_goal': weeklyStepsGoal,
-  };
+        'nickname': nickname,
+        'name': name,
+        'today_steps': todaySteps,
+        'daily_steps_goal': dailyStepsGoal,
+        'this_week_steps': thisWeekSteps,
+        'weekly_steps_goal': weeklyStepsGoal,
+      };
 }

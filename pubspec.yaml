@@ -39,8 +39,9 @@ dependencies:
   equatable: ^2.0.3
   mockito: ^5.1.0
   http_interceptor: ^1.0.2
-  cupertino_icons: ^1.0.4
   json_annotation: ^4.4.0
+  pedometer: ^3.0.0
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:

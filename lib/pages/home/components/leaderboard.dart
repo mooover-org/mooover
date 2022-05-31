@@ -30,7 +30,8 @@ class Leaderboard extends StatelessWidget {
                     Icons.group,
                     size: 50,
                   ),
-                  trailing: Text("Steps: ${leaderboardEntry.steps.toString()}"),
+                  trailing: Text(
+                      "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
                 ),
               );
             },
@@ -52,8 +53,8 @@ class Leaderboard extends StatelessWidget {
                           Icons.group,
                           size: 50,
                         ),
-                        trailing:
-                            Text("Steps: ${leaderboardEntry.steps.toString()}"),
+                        trailing: Text(
+                            "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
                       ),
                     );
                   },

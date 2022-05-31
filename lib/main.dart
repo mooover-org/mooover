@@ -6,7 +6,9 @@ import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
+import 'package:mooover/utils/services/steps_services.dart';
 
 import 'utils/cubits/app_theme/app_theme_cubit.dart';
 import 'utils/cubits/app_theme/app_theme_states.dart';
@@ -18,15 +20,27 @@ void main() async {
   } else {
     await AppConfig.loadForProduction();
   }
-  runApp(App());
+  runApp(const App());
 }
 
 /// The main application widget.
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   final _router = AppRouter();
   final _appThemeCubit = AppThemeCubit();
+  final _userStepsCubit = UserStepsCubit();
 
-  App({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    StepsServices(hotReloadCallback: _userStepsCubit.hotReloadStepsData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +53,13 @@ class App extends StatelessWidget {
           create: (_) => UserInfoCubit(),
         ),
         BlocProvider(
-          create: (_) => _appThemeCubit,
+          create: (_) => _userStepsCubit,
         ),
         BlocProvider(
           create: (_) => GroupInfoCubit(),
+        ),
+        BlocProvider(
+          create: (_) => _appThemeCubit,
         ),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(

@@ -10,6 +10,7 @@ import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 
@@ -29,16 +30,18 @@ class LoginPage extends StatelessWidget {
           if (state is UserSessionLoadedState) {
             log('LoginPage: listener: logged in');
             await BlocProvider.of<UserInfoCubit>(context).loadUserInfo();
-            await BlocProvider.of<AppThemeCubit>(context).loadAppTheme();
+            await BlocProvider.of<UserStepsCubit>(context).loadStepsData();
             await BlocProvider.of<GroupInfoCubit>(context).loadGroupInfo();
+            await BlocProvider.of<AppThemeCubit>(context).loadAppTheme();
             log('LoginPage: listener: user info loaded');
             context.router.popUntilRoot();
             log('LoginPage: listener: popped');
           } else if (state is UserSessionNoState && BlocProvider.of<UserInfoCubit>(context).state is UserInfoLoadedState) {
             log('LoginPage: listener: not logged in and user info loaded');
             await BlocProvider.of<UserInfoCubit>(context).removeUserInfo();
-            await BlocProvider.of<AppThemeCubit>(context).removeAppTheme();
+            await BlocProvider.of<UserStepsCubit>(context).removeStepsData();
             await BlocProvider.of<GroupInfoCubit>(context).removeGroupInfo();
+            await BlocProvider.of<AppThemeCubit>(context).removeAppTheme();
             log('LoginPage: listener: user info removed');
           }
         },

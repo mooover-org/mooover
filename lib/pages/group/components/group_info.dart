@@ -30,11 +30,11 @@ class GroupInfo extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      "Daily steps: ${state.group.steps} / ${state.group.dailyStepsGoal}",
+                      "Daily steps: ${state.group.todaySteps} / ${state.group.dailyStepsGoal}",
                       textAlign: TextAlign.center,
                     ),
                     Text(
-                      "Weekly steps: ${state.group.steps} / ${state.group.weeklyStepsGoal}",
+                      "Weekly steps: ${state.group.thisWeekSteps} / ${state.group.weeklyStepsGoal}",
                       textAlign: TextAlign.center,
                     ),
                     OutlinedButton(

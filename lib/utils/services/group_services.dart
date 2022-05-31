@@ -45,7 +45,7 @@ class GroupServices {
               .body)
           .map<Group>((group) => Group.fromJson(group))
           .toList();
-      groups.sort((a, b) => a.steps - b.steps);
+      groups.sort((a, b) => a.thisWeekSteps - b.thisWeekSteps);
       log('Got groups: $groups');
       return groups;
     } else {

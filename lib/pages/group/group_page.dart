@@ -103,7 +103,8 @@ class GroupPage extends StatelessWidget {
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(member.picture),
                         ),
-                        trailing: Text("Steps: ${member.steps.toString()}"),
+                        trailing:
+                            Text("Steps: ${member.thisWeekSteps.toString()}"),
                       ),
                     );
                   },

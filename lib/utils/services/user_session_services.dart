@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mooover/utils/domain/exceptions.dart';
 import 'package:mooover/utils/domain/id_token.dart';
-import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 
@@ -103,15 +102,16 @@ class UserSessionServices {
       }
       idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
-      await setRefreshToken(response.refreshToken);
       try {
-        final registeredUserResponse = await httpClient.get("${AppConfig().userServicesUrl}/${idToken!.sub}".toUri());
+        final registeredUserResponse = await httpClient
+            .get("${AppConfig().userServicesUrl}/${idToken!.sub}".toUri());
         if (registeredUserResponse.statusCode == 404) {
           await registerNewUser();
         }
       } on http.ClientException {
         throw LoginException();
       }
+      await setRefreshToken(response.refreshToken);
     } catch (e) {
       log(e.toString());
       rethrow;
@@ -121,18 +121,21 @@ class UserSessionServices {
   /// Performs a register user action.
   Future<void> registerNewUser() async {
     try {
-      final userInfo = jsonDecode((await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri())).body);
-      final response = await httpClient.post((AppConfig().userServicesUrl).toUri(),
-          body: jsonEncode({
-            "sub": userInfo["sub"],
-            "name": userInfo["name"],
-            "given_name": userInfo["given_name"],
-            "family_name": userInfo["family_name"],
-            "nickname": userInfo["nickname"],
-            "email": userInfo["email"],
-            "picture": userInfo["picture"],
-          }),
-          headers: {"Content-Type": "application/json"});
+      final userInfo = jsonDecode(
+          (await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri()))
+              .body);
+      final response =
+          await httpClient.post((AppConfig().userServicesUrl).toUri(),
+              body: jsonEncode({
+                "sub": userInfo["sub"],
+                "name": userInfo["name"],
+                "given_name": userInfo["given_name"],
+                "family_name": userInfo["family_name"],
+                "nickname": userInfo["nickname"],
+                "email": userInfo["email"],
+                "picture": userInfo["picture"],
+              }),
+              headers: {"Content-Type": "application/json"});
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw LoginException(message: "could not register user");
       }
