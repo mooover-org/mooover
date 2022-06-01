@@ -16,6 +16,8 @@
   "app": {
     "bundleIdentifier": "usr.adipopbv.mooover",
     "initialAppTheme": "light",
-    "lastStepsCountKey": "last_steps_count"
+    "lastStepsCountKey": "last_steps_count",
+    "runInBackgroundKey": "run_in_background",
+    "stepsUpdateInterval": 5
   }
 }

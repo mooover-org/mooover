@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
@@ -15,7 +16,8 @@ class StepsServices {
   static final _instance = StepsServices._();
 
   StepsServices._() {
-    initPedometer();
+    _initPedometer();
+    _initBackgroundExecution();
   }
 
   factory StepsServices({Function? hotReloadCallback}) {
@@ -39,7 +41,7 @@ class StepsServices {
   Function? _hotReloadCallback;
 
   /// Initialize the pedometer.
-  Future<void> initPedometer() async {
+  Future<void> _initPedometer() async {
     final status = await Permission.activityRecognition.request();
     if (status == PermissionStatus.granted) {
       log("Activity recognition permission granted");
@@ -62,10 +64,12 @@ class StepsServices {
   /// What happens when the step counter is updated.
   void _onStepCount(StepCount event) {
     _stepCount = event.steps;
-    if (_timeStamp.difference(event.timeStamp).inSeconds > 3) {
+    log('Time difference: ${event.timeStamp.difference(_timeStamp).inSeconds}');
+    if (event.timeStamp.difference(_timeStamp).inSeconds >
+        AppConfig().stepsUpdateInterval) {
+      _timeStamp = event.timeStamp;
       _updateSteps();
     }
-    _timeStamp = event.timeStamp;
   }
 
   /// What happens when the step counter encounters an error.
@@ -76,8 +80,12 @@ class StepsServices {
   /// What happens when the pedestrian status is updated.
   void _onPedestrianStatusChanged(PedestrianStatus event) {
     _pedestrianStatus = event.status;
-    _timeStamp = event.timeStamp;
-    _updateSteps();
+    log('Time difference: ${event.timeStamp.difference(_timeStamp).inSeconds}');
+    if (event.timeStamp.difference(_timeStamp).inSeconds >
+        AppConfig().stepsUpdateInterval) {
+      _timeStamp = event.timeStamp;
+      _updateSteps();
+    }
   }
 
   /// What happens when the pedestrian status encounters an error.
@@ -85,9 +93,29 @@ class StepsServices {
     log('Pedestrian status error: $error');
   }
 
-  /// Get the pedestrian status.
-  String getPedestrianStatus() {
-    return _pedestrianStatus;
+  Future<void> _initBackgroundExecution() async {
+    var runInBackgroundString =
+        await _secureStorage.read(key: AppConfig().runInBackgroundKey);
+    if (runInBackgroundString == null) {
+      await _secureStorage.write(
+          key: AppConfig().runInBackgroundKey, value: "true");
+      runInBackgroundString = "true";
+    }
+    final runInBackground = runInBackgroundString == "true";
+    if (runInBackground) {
+      const config = FlutterBackgroundAndroidConfig(
+        notificationTitle: 'Mooover!',
+        notificationText:
+            'The app is running in the background to track your steps.',
+        notificationImportance: AndroidNotificationImportance.Default,
+        enableWifiLock: true,
+      );
+      // final hasPermissions =
+      //     await FlutterBackground.initialize(androidConfig: config);
+      // if (hasPermissions) {
+      //   await FlutterBackground.enableBackgroundExecution();
+      // }
+    }
   }
 
   /// Update the steps on the server and reload the ui state.
@@ -107,13 +135,16 @@ class StepsServices {
           log("New steps count to post: $newStepsCount");
           await httpClient.post(
               (AppConfig().stepsServicesUrl +
-                  '/${UserSessionServices().getUserId()}')
+                      '/${UserSessionServices().getUserId()}')
                   .toUri(),
               headers: {'Content-Type': 'application/json'},
               body: jsonEncode({
                 'steps': newStepsCount,
               }));
           log('Posted new steps: $newStepsCount');
+          await _secureStorage.write(
+              key: AppConfig().lastStepsCountKey, value: _stepCount.toString());
+          log('Updated last steps count: $_stepCount');
         }
       } else {
         log("No last steps count");
@@ -125,5 +156,10 @@ class StepsServices {
     }
     log("Steps updated: $_stepCount, $_pedestrianStatus");
     _hotReloadCallback?.call();
+  }
+
+  /// Get the pedestrian status.
+  String getPedestrianStatus() {
+    return _pedestrianStatus;
   }
 }
