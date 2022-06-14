@@ -7,15 +7,15 @@ import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
 class UserInfoCubit extends Cubit<UserInfoState> {
-  UserInfoCubit(
-      {UserInfoState initialState = const UserInfoNoState()})
+  UserInfoCubit({UserInfoState initialState = const UserInfoNoState()})
       : super(initialState);
 
   /// This method is used to load the user info.
   Future<void> loadUserInfo() async {
     emit(const UserInfoLoadingState());
     try {
-      User user = await UserServices().getUser(UserSessionServices().getUserId());
+      User user =
+          await UserServices().getUser(UserSessionServices().getUserId());
       emit(UserInfoLoadedState(user));
       log('User info loaded');
     } catch (e) {
@@ -38,11 +38,27 @@ class UserInfoCubit extends Cubit<UserInfoState> {
   Future<void> changeDailyStepsGoal(int newDailyStepsGoal) async {
     emit(const UserInfoLoadingState());
     try {
-      User user = await UserServices().getUser(UserSessionServices().getUserId());
+      User user =
+          await UserServices().getUser(UserSessionServices().getUserId());
       user.dailyStepsGoal = newDailyStepsGoal;
       await UserServices().updateUser(user);
       emit(UserInfoLoadedState(user));
       log('User daily steps goal changed');
+    } catch (e) {
+      emit(UserInfoErrorState(e.toString()));
+    }
+  }
+
+  /// This method is used to change the weekly steps goal.
+  Future<void> changeWeeklyStepsGoal(int newWeeklyStepsGoal) async {
+    emit(const UserInfoLoadingState());
+    try {
+      User user =
+      await UserServices().getUser(UserSessionServices().getUserId());
+      user.weeklyStepsGoal = newWeeklyStepsGoal;
+      await UserServices().updateUser(user);
+      emit(UserInfoLoadedState(user));
+      log('User weekly steps goal changed');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
     }

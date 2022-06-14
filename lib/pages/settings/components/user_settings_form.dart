@@ -116,6 +116,40 @@ class UserSettingsForm extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          'Weekly steps goal',
+                          textAlign: TextAlign.start,
+                        ),
+                        SizedBox(
+                          width: 80,
+                          height: 30,
+                          child: TextField(
+                            controller: TextEditingController(
+                                text: state.user.weeklyStepsGoal.toString()),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: const InputDecoration(
+                              border: UnderlineInputBorder(),
+                              filled: true,
+                            ),
+                            onSubmitted: (String? value) {
+                              if (value != null) {
+                                BlocProvider.of<UserInfoCubit>(context)
+                                    .changeWeeklyStepsGoal(int.parse(value));
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const Divider(
                     indent: 10,
                     endIndent: 10,

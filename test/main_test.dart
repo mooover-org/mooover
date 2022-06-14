@@ -5,7 +5,7 @@ import 'package:mooover/main.dart';
 void main() {
   group("App", () {
     testWidgets('the material app is created', (WidgetTester tester) async {
-      await tester.pumpWidget(App());
+      await tester.pumpWidget(const App());
       expect(find.byType(MaterialApp), findsOneWidget);
     });
   });

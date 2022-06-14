@@ -9,14 +9,27 @@ class User {
   String nickname;
   String email;
   String picture;
-  int steps;
+  int todaySteps;
   int dailyStepsGoal;
+  int thisWeekSteps;
+  int weeklyStepsGoal;
   AppTheme appTheme;
 
   get id => sub;
 
-  User(this.sub, this.name, this.givenName, this.familyName, this.nickname,
-      this.email, this.picture, this.steps, this.dailyStepsGoal, this.appTheme);
+  User(
+      this.sub,
+      this.name,
+      this.givenName,
+      this.familyName,
+      this.nickname,
+      this.email,
+      this.picture,
+      this.todaySteps,
+      this.dailyStepsGoal,
+      this.thisWeekSteps,
+      this.weeklyStepsGoal,
+      this.appTheme);
 
   /// Creates a user from json map.
   User.fromJson(Map<String, dynamic> jsonData)
@@ -27,8 +40,10 @@ class User {
         nickname = jsonData['nickname'],
         email = jsonData['email'],
         picture = jsonData['picture'],
-        steps = jsonData['steps'],
+        todaySteps = jsonData['today_steps'],
         dailyStepsGoal = jsonData['daily_steps_goal'],
+        thisWeekSteps = jsonData['this_week_steps'],
+        weeklyStepsGoal = jsonData['weekly_steps_goal'],
         appTheme = appThemeFromString(jsonData['app_theme']);
 
   /// Creates a json map from the user.
@@ -40,8 +55,10 @@ class User {
         'nickname': nickname,
         'email': email,
         'picture': picture,
-        'steps': steps,
+        'today_steps': todaySteps,
         'daily_steps_goal': dailyStepsGoal,
+        'this_week_steps': thisWeekSteps,
+        'weekly_steps_goal': weeklyStepsGoal,
         'app_theme': appThemeToString(appTheme),
       };
 }
