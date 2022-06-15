@@ -47,7 +47,7 @@ class UserSessionCubit extends Cubit<UserSessionState> {
       emit(const UserSessionNoState());
       log('User session logged out');
     } catch (_) {
-      if (UserSessionServices().isLoggedIn()) {
+      if (UserSessionServices().liveUserSession()) {
         emit(const UserSessionLoadedState());
         log('User session still logged in');
       } else {

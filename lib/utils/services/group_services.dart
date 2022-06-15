@@ -7,7 +7,6 @@ import 'package:mooover/utils/domain/group.dart';
 import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
-import 'package:mooover/utils/services/user_session_services.dart';
 
 /// The services for the group entity.
 class GroupServices {
@@ -17,13 +16,13 @@ class GroupServices {
 
   factory GroupServices() => _instance;
 
-  final http.Client httpClient = InterceptedClient.build(interceptors: [
+  final http.Client _httpClient = InterceptedClient.build(interceptors: [
     AuthInterceptor(),
   ]);
 
-  /// Gets the group with the given id.
-  Future<Group?> getGroup(String groupId) async {
-    final response = (await httpClient.get(
+  /// Gets the group with the given [groupId].
+  Future<Group> getGroup(String groupId) async {
+    final response = (await _httpClient.get(
         (AppConfig().groupServicesUrl + '/$groupId').toUri(),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
@@ -31,86 +30,109 @@ class GroupServices {
       log('Got group: ${group.toJson()}');
       return group;
     } else {
-      log('Failed to get group: ${response.statusCode}');
-      return null;
+      throw Exception(
+          'Failed to get group: ${jsonDecode(response.body)["detail"]}');
     }
   }
 
-  /// Gets multiple groups, with or without a filter applied
+  /// Gets multiple groups, with or without a [nicknameFilter] applied
   Future<List<Group>> getGroups({String nicknameFilter = ""}) async {
-    if (nicknameFilter.isEmpty) {
-      final List<Group> groups = jsonDecode((await httpClient.get(
-                  (AppConfig().groupServicesUrl).toUri(),
-                  headers: {'Content-Type': 'application/json'}))
-              .body)
+    final response = (await _httpClient.get(
+        (AppConfig().groupServicesUrl +
+                (nicknameFilter == '' ? '?nickname=$nicknameFilter' : ''))
+            .toUri(),
+        headers: {'Content-Type': 'application/json'}));
+    if (response.statusCode == 200) {
+      final List<Group> groups = jsonDecode(response.body)
           .map<Group>((group) => Group.fromJson(group))
           .toList();
-      groups.sort((a, b) => a.thisWeekSteps - b.thisWeekSteps);
+      if (nicknameFilter == '') {
+        groups.sort((a, b) => a.thisWeekSteps - b.thisWeekSteps);
+      }
       log('Got groups: $groups');
       return groups;
     } else {
-      final groups = jsonDecode((await httpClient.get(
-                  (AppConfig().groupServicesUrl + '?nickname=$nicknameFilter')
-                      .toUri(),
-                  headers: {'Content-Type': 'application/json'}))
-              .body)
-          .map<Group>((group) => Group.fromJson(group))
-          .toList();
-      log('Got groups: $groups');
-      return groups;
+      throw Exception(
+          'Failed to get groups: ${jsonDecode(response.body)["detail"]}');
     }
   }
 
+  /// Creates a new group with the given [nickname] and [name] and adds the
+  /// user with [userId] to it.
   Future<void> createGroup(String userId, String nickname, String name) async {
-    await httpClient.post((AppConfig().groupServicesUrl).toUri(),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'user_id': userId,
-          'nickname': nickname,
-          'name': name,
-        }));
-    log('Created group: $nickname');
+    final response =
+        await _httpClient.post((AppConfig().groupServicesUrl).toUri(),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'user_id': userId,
+              'nickname': nickname,
+              'name': name,
+            }));
+    if (response.statusCode == 201) {
+      log('Created group: $nickname');
+    } else {
+      throw Exception(
+          'Failed to create group: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
-  /// Updates the group with the given id.
+  /// Updates the [group].
   Future<void> updateGroup(Group group) async {
-    await httpClient.put(
+    final response = await _httpClient.put(
         (AppConfig().groupServicesUrl + '/${group.nickname}').toUri(),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(group.toJson()));
-    log('Modified group: ${group.nickname}');
+    if (response.statusCode == 200) {
+      log('Modified group: ${group.nickname}');
+    } else {
+      throw Exception(
+          'Failed to modify group: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
   /// Adds the user with the given [userId] to the group with the given
   /// [nickname].
   Future<void> addMemberToGroup(String userId, String nickname) async {
-    await httpClient.put(
+    final response = await _httpClient.put(
         (AppConfig().groupServicesUrl + '/$nickname/members').toUri(),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId}));
-    log('Added member to group: $nickname');
+    if (response.statusCode == 200) {
+      log('Added member to group: $nickname');
+    } else {
+      throw Exception(
+          'Failed to add member to group: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
   /// Removes the user with the given [userId] from the group with the given
-  /// [nickname].
+  /// [groupId].
   Future<void> removeMemberFromGroup(String userId, String groupId) async {
-    await httpClient.delete(
+    final response = await _httpClient.delete(
         (AppConfig().groupServicesUrl + '/$groupId/members/$userId').toUri(),
         headers: {'Content-Type': 'application/json'});
-    log('Removed member from group: $groupId');
+    if (response.statusCode == 200) {
+      log('Removed member from group: $groupId');
+    } else {
+      throw Exception(
+          'Failed to remove member from group: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
+  /// Gets the members of the group with the given [groupId].
   Future<List<User>> getMembersOfGroup(String groupId) async {
-    var members = jsonDecode((await httpClient.get(
-                (AppConfig().groupServicesUrl + '/$groupId/members').toUri(),
-                headers: {'Content-Type': 'application/json'}))
-            .body)
-        .map<User>((member) => User.fromJson(member))
-        .toList();
-    members = members
-        .where((member) => member.id != UserSessionServices().getUserId())
-        .toList();
-    log('Got members of group: $members');
-    return members;
+    final response = (await _httpClient.get(
+        (AppConfig().groupServicesUrl + '/$groupId/members').toUri(),
+        headers: {'Content-Type': 'application/json'}));
+    if (response.statusCode == 200) {
+      var members = jsonDecode(response.body)
+          .map<User>((member) => User.fromJson(member))
+          .toList();
+      log('Got members of group: $members');
+      return members;
+    } else {
+      throw Exception(
+          'Failed to get members of group: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 }

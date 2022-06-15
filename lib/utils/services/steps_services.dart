@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_background/flutter_background.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
@@ -17,7 +16,6 @@ class StepsServices {
 
   StepsServices._() {
     _initPedometer();
-    _initBackgroundExecution();
   }
 
   factory StepsServices({Function? hotReloadCallback}) {
@@ -27,14 +25,11 @@ class StepsServices {
     return _instance;
   }
 
-  final http.Client httpClient = InterceptedClient.build(interceptors: [
+  final http.Client _httpClient = InterceptedClient.build(interceptors: [
     AuthInterceptor(),
   ]);
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  final Stream<StepCount> _stepCountStream = Pedometer.stepCountStream;
-  final Stream<PedestrianStatus> _pedestrianStatusStream =
-      Pedometer.pedestrianStatusStream;
   int _stepCount = 0;
   String _pedestrianStatus = "Unknown";
   DateTime _timeStamp = DateTime.now();
@@ -45,8 +40,8 @@ class StepsServices {
     final status = await Permission.activityRecognition.request();
     if (status == PermissionStatus.granted) {
       log("Activity recognition permission granted");
-      _stepCountStream.listen(_onStepCount).onError(_onStepCountError);
-      _pedestrianStatusStream
+      Pedometer.stepCountStream.listen(_onStepCountChanged).onError(_onStepCountError);
+      Pedometer.pedestrianStatusStream
           .listen(_onPedestrianStatusChanged)
           .onError(_onPedestrianStatusError);
       log("Step counter service started");
@@ -62,7 +57,7 @@ class StepsServices {
   }
 
   /// What happens when the step counter is updated.
-  void _onStepCount(StepCount event) {
+  void _onStepCountChanged(StepCount event) {
     _stepCount = event.steps;
     log('Time difference: ${event.timeStamp.difference(_timeStamp).inSeconds}');
     if (event.timeStamp.difference(_timeStamp).inSeconds >
@@ -93,31 +88,6 @@ class StepsServices {
     log('Pedestrian status error: $error');
   }
 
-  Future<void> _initBackgroundExecution() async {
-    var runInBackgroundString =
-        await _secureStorage.read(key: AppConfig().runInBackgroundKey);
-    if (runInBackgroundString == null) {
-      await _secureStorage.write(
-          key: AppConfig().runInBackgroundKey, value: "true");
-      runInBackgroundString = "true";
-    }
-    final runInBackground = runInBackgroundString == "true";
-    if (runInBackground) {
-      const config = FlutterBackgroundAndroidConfig(
-        notificationTitle: 'Mooover!',
-        notificationText:
-            'The app is running in the background to track your steps.',
-        notificationImportance: AndroidNotificationImportance.Default,
-        enableWifiLock: true,
-      );
-      // final hasPermissions =
-      //     await FlutterBackground.initialize(androidConfig: config);
-      // if (hasPermissions) {
-      //   await FlutterBackground.enableBackgroundExecution();
-      // }
-    }
-  }
-
   /// Update the steps on the server and reload the ui state.
   Future<void> _updateSteps() async {
     try {
@@ -133,7 +103,7 @@ class StepsServices {
         } else {
           final newStepsCount = _stepCount - lastStepsCount;
           log("New steps count to post: $newStepsCount");
-          await httpClient.post(
+          await _httpClient.post(
               (AppConfig().stepsServicesUrl +
                       '/${UserSessionServices().getUserId()}')
                   .toUri(),

@@ -20,18 +20,18 @@ class UserSessionServices {
 
   factory UserSessionServices() => _instance;
 
-  final FlutterAppAuth _appAuth = FlutterAppAuth();
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-  final http.Client httpClient = InterceptedClient.build(interceptors: [
+  final http.Client _httpClient = InterceptedClient.build(interceptors: [
     AuthInterceptor(),
   ]);
+  final FlutterAppAuth _appAuth = FlutterAppAuth();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  IdToken? idToken;
+  IdToken? _idToken;
   String? accessToken;
   String? refreshToken;
 
   /// Sets the refresh token value in memory and in the secure storage.
-  Future<void> setRefreshToken(String? value) async {
+  Future<void> setRefreshToken(String value) async {
     refreshToken = value;
     await _secureStorage.write(key: AppConfig().refreshTokenKey, value: value);
   }
@@ -63,9 +63,9 @@ class UserSessionServices {
         log("got null response when refreshing tokens");
         throw LoginException();
       }
-      idToken = IdToken.fromString(response.idToken);
+      _idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
-      await setRefreshToken(response.refreshToken);
+      await setRefreshToken(response.refreshToken!);
       return;
     } on LoginException {
       logout();
@@ -100,32 +100,32 @@ class UserSessionServices {
         log("got null response when logging in");
         throw LoginException();
       }
-      idToken = IdToken.fromString(response.idToken);
+      _idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
       try {
-        final registeredUserResponse = await httpClient
-            .get("${AppConfig().userServicesUrl}/${idToken!.sub}".toUri());
+        final registeredUserResponse = await _httpClient
+            .get("${AppConfig().userServicesUrl}/${_idToken!.sub}".toUri());
         if (registeredUserResponse.statusCode == 404) {
           await registerNewUser();
         }
       } on http.ClientException {
         throw LoginException();
       }
-      await setRefreshToken(response.refreshToken);
+      await setRefreshToken(response.refreshToken!);
     } catch (e) {
       log(e.toString());
       rethrow;
     }
   }
 
-  /// Performs a register user action.
+  /// Registers a new user.
   Future<void> registerNewUser() async {
     try {
       final userInfo = jsonDecode(
-          (await httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri()))
+          (await _httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri()))
               .body);
       final response =
-          await httpClient.post((AppConfig().userServicesUrl).toUri(),
+          await _httpClient.post((AppConfig().userServicesUrl).toUri(),
               body: jsonEncode({
                 "sub": userInfo["sub"],
                 "name": userInfo["name"],
@@ -172,14 +172,16 @@ class UserSessionServices {
     }
   }
 
+  /// Returns the currently logged in user's id token.
   String getUserId() {
-    if (idToken == null) {
-      throw const AppException(message: "no id token");
+    if (_idToken == null) {
+      throw Exception("no id token");
     }
-    return idToken!.sub;
+    return _idToken!.sub;
   }
 
-  bool isLoggedIn() {
+  /// Returns the user session status.
+  bool liveUserSession() {
     return accessToken != null;
   }
 }

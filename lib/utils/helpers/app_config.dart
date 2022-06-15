@@ -20,7 +20,6 @@ class AppConfig {
   String auth0Audience = "";
   String refreshTokenKey = "refresh_token";
   String lastStepsCountKey = "last_steps_count";
-  String runInBackgroundKey = "run_in_background";
   int stepsUpdateInterval = 5;
 
   AppConfig._();
@@ -47,7 +46,7 @@ class AppConfig {
     }
   }
 
-  static void _fromJson(json) {
+  static void _fromJson(Map<String, dynamic> json) {
     _instance.bundleIdentifier = json["app"]["bundleIdentifier"];
     _instance.initialAppTheme =
         appThemeFromString(json["app"]["initialAppTheme"]);
@@ -62,7 +61,6 @@ class AppConfig {
     _instance.auth0Audience = json["auth0"]["audience"];
     _instance.refreshTokenKey = json["auth0"]["refreshTokenKey"];
     _instance.lastStepsCountKey = json["app"]["lastStepsCountKey"];
-    _instance.runInBackgroundKey = json["app"]["runInBackgroundKey"];
     _instance.stepsUpdateInterval = json["app"]["stepsUpdateInterval"];
   }
 }

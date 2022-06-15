@@ -16,31 +16,42 @@ class UserServices {
 
   factory UserServices() => _instance;
 
-  final http.Client httpClient = InterceptedClient.build(interceptors: [
+  final http.Client _httpClient = InterceptedClient.build(interceptors: [
     AuthInterceptor(),
   ]);
 
-  /// Gets the user with the given id.
+  /// Gets the user with the given [userId].
   Future<User> getUser(String userId) async {
-    final user = User.fromJson(jsonDecode((await httpClient.get(
-            (AppConfig().userServicesUrl + '/$userId').toUri(),
-            headers: {'Content-Type': 'application/json'}))
-        .body));
-    log('Got user: ${user.toJson()}');
-    return user;
+    final response = (await _httpClient.get(
+        (AppConfig().userServicesUrl + '/$userId').toUri(),
+        headers: {'Content-Type': 'application/json'}));
+    if (response.statusCode == 200) {
+      final user = User.fromJson(jsonDecode(response.body));
+      log('Got user: ${user.toJson()}');
+      return user;
+    } else {
+      throw Exception(
+          'Failed to get user: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
-  /// Updates the user with the given id.
+  /// Updates the [user].
   Future<void> updateUser(User user) async {
-    await httpClient.put((AppConfig().userServicesUrl + '/${user.sub}').toUri(),
+    final response = await _httpClient.put(
+        (AppConfig().userServicesUrl + '/${user.sub}').toUri(),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()));
-    log('Modified user: ${user.sub}');
+    if (response.statusCode == 200) {
+      log('Modified user: ${user.sub}');
+    } else {
+      throw Exception(
+          'Failed to modify user: ${jsonDecode(response.body)["detail"]}');
+    }
   }
 
-  /// Gets the group of the user with the given id.
+  /// Gets the group of the user with the given [userId].
   Future<Group?> getGroupOfUser(String userId) async {
-    final response = (await httpClient.get(
+    final response = (await _httpClient.get(
         (AppConfig().userServicesUrl + '/$userId/group').toUri(),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
@@ -51,8 +62,8 @@ class UserServices {
       log('User has no group');
       return null;
     } else {
-      log('Failed to get group of user: ${response.statusCode}');
-      throw Exception('Failed to get group of user');
+      throw Exception(
+          'Failed to get group of user: ${jsonDecode(response.body)["detail"]}');
     }
   }
 }
