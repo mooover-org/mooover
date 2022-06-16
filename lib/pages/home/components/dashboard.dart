@@ -5,6 +5,7 @@ import 'package:mooover/utils/cubits/user_steps/user_steps_states.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 import 'package:mooover/widgets/panel.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 /// This is the dashboard component.
 ///
@@ -23,27 +24,79 @@ class Dashboard extends StatelessWidget {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
               children: [
+                CircularPercentIndicator(
+                  radius: 90,
+                  lineWidth: 20,
+                  percent: state.todaySteps <= state.dailyStepsGoal
+                      ? state.todaySteps / state.dailyStepsGoal
+                      : 1,
+                  animation: true,
+                  animateFromLastPercent: true,
+                  header: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      "This Day's Steps",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                  ),
+                  center: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        state.pedestrianStatus == "walking"
+                            ? Icons.directions_walk
+                            : state.pedestrianStatus == "stopped"
+                                ? Icons.accessibility_new
+                                : Icons.question_mark,
+                        size: 70,
+                        color: Theme.of(context).textTheme.caption?.color,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          state.todaySteps.toString(),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                  progressColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  circularStrokeCap: CircularStrokeCap.round,
+                ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(top: 15.0),
                   child: Text(
-                    'Daily steps: ${state.todaySteps} / ${state.dailyStepsGoal}.',
+                    "This Week's Steps",
                     textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.caption,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Weekly steps: ${state.thisWeekSteps} / ${state.weeklyStepsGoal}.',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Pedestrian Status: ${state.pedestrianStatus}.',
-                    textAlign: TextAlign.center,
+                  padding: const EdgeInsets.all(5.0),
+                  child: Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width - 100,
+                      child: LinearPercentIndicator(
+                        width: MediaQuery.of(context).size.width - 100,
+                        lineHeight: 20,
+                        animation: true,
+                        animateFromLastPercent: true,
+                        percent: state.thisWeekSteps <= state.weeklyStepsGoal
+                            ? state.thisWeekSteps / state.weeklyStepsGoal
+                            : 1,
+                        center: Text(
+                          '${state.thisWeekSteps}',
+                          textAlign: TextAlign.center,
+                        ),
+                        progressColor: Theme.of(context).primaryColor,
+                        backgroundColor: Theme.of(context).backgroundColor,
+                        barRadius: const Radius.circular(20),
+                      ),
+                    ),
                   ),
                 ),
               ],

@@ -53,8 +53,14 @@ class AppRouter extends _i6.RootStackRouter {
           barrierDismissible: false);
     },
     SettingsPageRoute.name: (routeData) {
-      return _i6.AdaptivePage<dynamic>(
-          routeData: routeData, child: const _i5.SettingsPage());
+      return _i6.CustomPage<dynamic>(
+          routeData: routeData,
+          child: const _i5.SettingsPage(),
+          transitionsBuilder: _i6.TransitionsBuilders.slideLeftWithFade,
+          durationInMilliseconds: 200,
+          reverseDurationInMilliseconds: 200,
+          opaque: true,
+          barrierDismissible: false);
     }
   };
 

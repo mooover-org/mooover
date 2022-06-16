@@ -41,9 +41,10 @@ class UserSettingsForm extends StatelessWidget {
                     thickness: 1,
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 5.0,
+                        horizontal: 30.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'App theme',
@@ -83,16 +84,17 @@ class UserSettingsForm extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 5.0,
+                        horizontal: 30.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Daily steps goal',
                           textAlign: TextAlign.start,
                         ),
                         SizedBox(
-                          width: 80,
+                          width: 100,
                           height: 30,
                           child: TextField(
                             controller: TextEditingController(
@@ -117,16 +119,17 @@ class UserSettingsForm extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 5.0,
+                        horizontal: 30.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Weekly steps goal',
                           textAlign: TextAlign.start,
                         ),
                         SizedBox(
-                          width: 80,
+                          width: 120,
                           height: 30,
                           child: TextField(
                             controller: TextEditingController(

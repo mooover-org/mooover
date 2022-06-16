@@ -39,7 +39,7 @@ class GroupServices {
   Future<List<Group>> getGroups({String nicknameFilter = ""}) async {
     final response = (await _httpClient.get(
         (AppConfig().groupServicesUrl +
-                (nicknameFilter == '' ? '?nickname=$nicknameFilter' : ''))
+                (nicknameFilter == '' ? '' : '?nickname=$nicknameFilter'))
             .toUri(),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {

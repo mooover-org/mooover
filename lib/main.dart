@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
@@ -21,6 +22,7 @@ void main() async {
   } else {
     await AppConfig.loadForProduction();
   }
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const App());
 }
 

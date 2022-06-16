@@ -21,7 +21,12 @@ import 'package:mooover/pages/settings/settings_page.dart';
       transitionsBuilder: TransitionsBuilders.slideRightWithFade,
       durationInMilliseconds: 200,
       reverseDurationInMilliseconds: 200),
-  AutoRoute(page: SettingsPage, path: "/settings"),
+  CustomRoute(
+      page: SettingsPage,
+      path: "/settings",
+      transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+      durationInMilliseconds: 200,
+      reverseDurationInMilliseconds: 200),
 ])
 class $AppRouter {}
 

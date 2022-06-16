@@ -19,21 +19,40 @@ class Leaderboard extends StatelessWidget {
       builder: (context, state) {
         if (state is GroupInfoLoadedState) {
           return ListView.builder(
-            itemCount: state.groups.length,
+            itemCount: state.groups.length + 1,
             itemBuilder: (context, index) {
-              final leaderboardEntry = state.groups[index];
-              return Panel(
-                child: ListTile(
-                  title: Text(leaderboardEntry.name),
-                  subtitle: Text(leaderboardEntry.nickname),
-                  leading: const Icon(
-                    Icons.group,
-                    size: 50,
+              if (index == 0) {
+                return const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Leaderboard',
+                    textAlign: TextAlign.center,
                   ),
-                  trailing: Text(
-                      "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
-                ),
-              );
+                );
+              } else {
+                final leaderboardEntry = state.groups[index - 1];
+                return Panel(
+                  child: ListTile(
+                    title: Text(
+                      leaderboardEntry.name,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      leaderboardEntry.nickname,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    leading: const Icon(
+                      Icons.group,
+                      size: 50,
+                    ),
+                    trailing: Text(
+                        "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
+                    textColor: leaderboardEntry.id == state.group.id
+                        ? Theme.of(context).accentColor
+                        : null,
+                  ),
+                );
+              }
             },
           );
         } else if (state is GroupInfoNoState) {
@@ -42,21 +61,37 @@ class Leaderboard extends StatelessWidget {
                   child: Text('No groups available'),
                 )
               : ListView.builder(
-                  itemCount: state.groups.length,
+                  itemCount: state.groups.length + 1,
                   itemBuilder: (context, index) {
-                    final leaderboardEntry = state.groups[index];
-                    return Panel(
-                      child: ListTile(
-                        title: Text(leaderboardEntry.name),
-                        subtitle: Text(leaderboardEntry.nickname),
-                        leading: const Icon(
-                          Icons.group,
-                          size: 50,
+                    if (index == 0) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Leaderboard',
+                          textAlign: TextAlign.center,
                         ),
-                        trailing: Text(
-                            "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
-                      ),
-                    );
+                      );
+                    } else {
+                      final leaderboardEntry = state.groups[index - 1];
+                      return Panel(
+                        child: ListTile(
+                          title: Text(
+                            leaderboardEntry.name,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            leaderboardEntry.nickname,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          leading: const Icon(
+                            Icons.group,
+                            size: 50,
+                          ),
+                          trailing: Text(
+                              "Steps: ${leaderboardEntry.thisWeekSteps.toString()}"),
+                        ),
+                      );
+                    }
                   },
                 );
         } else if (state is GroupInfoLoadingState) {
