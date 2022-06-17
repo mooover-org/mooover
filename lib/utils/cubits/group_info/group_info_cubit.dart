@@ -91,7 +91,7 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
   Future<void> filterGroups(String nickname) async {
     emit(const GroupInfoLoadingState());
     try {
-      final groups = await GroupServices().getGroups(nicknameFilter: nickname);
+      final groups = await GroupServices().getGroups(nickname: nickname);
       emit(GroupInfoNoState(groups));
       log('Searched group loaded');
     } catch (e) {

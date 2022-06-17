@@ -23,7 +23,8 @@ class GroupServices {
   /// Gets the group with the given [groupId].
   Future<Group> getGroup(String groupId) async {
     final response = (await _httpClient.get(
-        (AppConfig().groupServicesUrl + '/$groupId').toUri(),
+        Uri.http(
+            AppConfig().apiDomain, '${AppConfig().groupServicesPath}/$groupId'),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
       final group = Group.fromJson(jsonDecode(response.body));
@@ -35,18 +36,24 @@ class GroupServices {
     }
   }
 
-  /// Gets multiple groups, with or without a [nicknameFilter] applied
-  Future<List<Group>> getGroups({String nicknameFilter = ""}) async {
+  /// Gets multiple groups, with or without a [nickname] filter applied
+  Future<List<Group>> getGroups(
+      {String nickname = "", bool orderedBySteps = false}) async {
+    Map<String, String> params = {};
+    if (nickname.isNotEmpty) {
+      params["nickname"] = nickname;
+    }
+    if (orderedBySteps) {
+      params["ordered_by_steps"] = orderedBySteps.toString();
+    }
     final response = (await _httpClient.get(
-        (AppConfig().groupServicesUrl +
-                (nicknameFilter == '' ? '' : '?nickname=$nicknameFilter'))
-            .toUri(),
+        Uri.http(AppConfig().apiDomain, AppConfig().groupServicesPath, params),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
       final List<Group> groups = jsonDecode(response.body)
           .map<Group>((group) => Group.fromJson(group))
           .toList();
-      if (nicknameFilter == '') {
+      if (nickname == '') {
         groups.sort((a, b) => a.thisWeekSteps - b.thisWeekSteps);
       }
       log('Got groups: $groups');
@@ -60,14 +67,14 @@ class GroupServices {
   /// Creates a new group with the given [nickname] and [name] and adds the
   /// user with [userId] to it.
   Future<void> createGroup(String userId, String nickname, String name) async {
-    final response =
-        await _httpClient.post((AppConfig().groupServicesUrl).toUri(),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'user_id': userId,
-              'nickname': nickname,
-              'name': name,
-            }));
+    final response = await _httpClient.post(
+        Uri.http(AppConfig().apiDomain, AppConfig().groupServicesPath),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': userId,
+          'nickname': nickname,
+          'name': name,
+        }));
     if (response.statusCode == 201) {
       log('Created group: $nickname');
     } else {
@@ -79,7 +86,8 @@ class GroupServices {
   /// Updates the [group].
   Future<void> updateGroup(Group group) async {
     final response = await _httpClient.put(
-        (AppConfig().groupServicesUrl + '/${group.nickname}').toUri(),
+        Uri.http(AppConfig().apiDomain,
+            '${AppConfig().groupServicesPath}/${group.nickname}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(group.toJson()));
     if (response.statusCode == 200) {
@@ -94,7 +102,8 @@ class GroupServices {
   /// [nickname].
   Future<void> addMemberToGroup(String userId, String nickname) async {
     final response = await _httpClient.put(
-        (AppConfig().groupServicesUrl + '/$nickname/members').toUri(),
+        Uri.http(AppConfig().apiDomain,
+            '${AppConfig().groupServicesPath}/$nickname/members'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'user_id': userId}));
     if (response.statusCode == 200) {
@@ -109,7 +118,8 @@ class GroupServices {
   /// [groupId].
   Future<void> removeMemberFromGroup(String userId, String groupId) async {
     final response = await _httpClient.delete(
-        (AppConfig().groupServicesUrl + '/$groupId/members/$userId').toUri(),
+        Uri.http(AppConfig().apiDomain,
+            '${AppConfig().groupServicesPath}/$groupId/members/$userId'),
         headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       log('Removed member from group: $groupId');
@@ -120,9 +130,15 @@ class GroupServices {
   }
 
   /// Gets the members of the group with the given [groupId].
-  Future<List<User>> getMembersOfGroup(String groupId) async {
+  Future<List<User>> getMembersOfGroup(String groupId,
+      {bool orderedBySteps = false}) async {
+    Map<String, String> params = {};
+    if (orderedBySteps) {
+      params["ordered_by_steps"] = orderedBySteps.toString();
+    }
     final response = (await _httpClient.get(
-        (AppConfig().groupServicesUrl + '/$groupId/members').toUri(),
+        Uri.http(AppConfig().apiDomain,
+            '${AppConfig().groupServicesPath}/$groupId/members', params),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
       var members = jsonDecode(response.body)

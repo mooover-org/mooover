@@ -40,7 +40,9 @@ class StepsServices {
     final status = await Permission.activityRecognition.request();
     if (status == PermissionStatus.granted) {
       log("Activity recognition permission granted");
-      Pedometer.stepCountStream.listen(_onStepCountChanged).onError(_onStepCountError);
+      Pedometer.stepCountStream
+          .listen(_onStepCountChanged)
+          .onError(_onStepCountError);
       Pedometer.pedestrianStatusStream
           .listen(_onPedestrianStatusChanged)
           .onError(_onPedestrianStatusError);
@@ -104,9 +106,8 @@ class StepsServices {
           final newStepsCount = _stepCount - lastStepsCount;
           log("New steps count to post: $newStepsCount");
           await _httpClient.post(
-              (AppConfig().stepsServicesUrl +
-                      '/${UserSessionServices().getUserId()}')
-                  .toUri(),
+              Uri.http(AppConfig().apiDomain,
+                  '${AppConfig().stepsServicesPath}/${UserSessionServices().getUserId()}'),
               headers: {'Content-Type': 'application/json'},
               body: jsonEncode({
                 'steps': newStepsCount,

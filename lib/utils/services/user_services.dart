@@ -23,7 +23,8 @@ class UserServices {
   /// Gets the user with the given [userId].
   Future<User> getUser(String userId) async {
     final response = (await _httpClient.get(
-        (AppConfig().userServicesUrl + '/$userId').toUri(),
+        Uri.http(
+            AppConfig().apiDomain, '${AppConfig().userServicesPath}/$userId'),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
       final user = User.fromJson(jsonDecode(response.body));
@@ -38,7 +39,7 @@ class UserServices {
   /// Updates the [user].
   Future<void> updateUser(User user) async {
     final response = await _httpClient.put(
-        (AppConfig().userServicesUrl + '/${user.sub}').toUri(),
+        Uri.http(AppConfig().apiDomain, '${AppConfig().userServicesPath}/${user.sub}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(user.toJson()));
     if (response.statusCode == 200) {
@@ -52,7 +53,7 @@ class UserServices {
   /// Gets the group of the user with the given [userId].
   Future<Group?> getGroupOfUser(String userId) async {
     final response = (await _httpClient.get(
-        (AppConfig().userServicesUrl + '/$userId/group').toUri(),
+        Uri.http(AppConfig().apiDomain, '${AppConfig().userServicesPath}/$userId/group'),
         headers: {'Content-Type': 'application/json'}));
     if (response.statusCode == 200) {
       final group = Group.fromJson(jsonDecode(response.body));

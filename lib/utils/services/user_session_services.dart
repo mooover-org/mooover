@@ -104,7 +104,7 @@ class UserSessionServices {
       accessToken = response.accessToken;
       try {
         final registeredUserResponse = await _httpClient
-            .get("${AppConfig().userServicesUrl}/${_idToken!.sub}".toUri());
+            .get(Uri.http(AppConfig().apiDomain, '${AppConfig().userServicesPath}/${_idToken!.sub}'));
         if (registeredUserResponse.statusCode == 404) {
           await registerNewUser();
         }
@@ -121,11 +121,11 @@ class UserSessionServices {
   /// Registers a new user.
   Future<void> registerNewUser() async {
     try {
-      final userInfo = jsonDecode(
-          (await _httpClient.get("${AppConfig().auth0Issuer}/userinfo".toUri()))
-              .body);
+      final userInfo = jsonDecode((await _httpClient
+              .get(Uri.https(AppConfig().auth0Domain, '/userinfo')))
+          .body);
       final response =
-          await _httpClient.post((AppConfig().userServicesUrl).toUri(),
+          await _httpClient.post(Uri.http(AppConfig().apiDomain, AppConfig().userServicesPath),
               body: jsonEncode({
                 "sub": userInfo["sub"],
                 "name": userInfo["name"],
