@@ -172,7 +172,7 @@ class UserSessionServices {
     }
   }
 
-  /// Returns the currently logged in user's id token.
+  /// Returns the currently logged in user's id.
   String getUserId() {
     if (_idToken == null) {
       throw Exception("no id token");

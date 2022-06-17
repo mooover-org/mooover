@@ -126,7 +126,6 @@ class StepsServices {
       log('Error updating steps: $error');
     }
     log("Steps updated: $_stepCount, $_pedestrianStatus");
-    _hotReloadCallback?.call();
   }
 
   /// Get the pedestrian status.

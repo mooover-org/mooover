@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/cubits/group_info/group_info_states.dart';
+import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
+import 'package:mooover/utils/cubits/leaderboard/leaderboard_states.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 import 'package:mooover/widgets/panel.dart';
@@ -14,10 +14,10 @@ class Leaderboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<GroupInfoCubit, GroupInfoState>(
-      bloc: BlocProvider.of<GroupInfoCubit>(context),
+    return BlocBuilder<LeaderboardCubit, LeaderboardState>(
+      bloc: BlocProvider.of<LeaderboardCubit>(context),
       builder: (context, state) {
-        if (state is GroupInfoLoadedState) {
+        if (state is LeaderboardMembershipState) {
           return ListView.builder(
             itemCount: state.groups.length + 1,
             itemBuilder: (context, index) {
@@ -55,7 +55,7 @@ class Leaderboard extends StatelessWidget {
               }
             },
           );
-        } else if (state is GroupInfoNoState) {
+        } else if (state is LeaderboardLoadedState) {
           return state.groups.isEmpty
               ? const Center(
                   child: Text('No groups available'),
@@ -94,11 +94,11 @@ class Leaderboard extends StatelessWidget {
                     }
                   },
                 );
-        } else if (state is GroupInfoLoadingState) {
+        } else if (state is LeaderboardLoadingState) {
           return const LoadingDisplay(
             transparent: true,
           );
-        } else if (state is GroupInfoErrorState) {
+        } else if (state is LeaderboardErrorState) {
           return ErrorDisplay(
             message: state.message,
             transparent: true,

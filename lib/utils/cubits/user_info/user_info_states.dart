@@ -15,10 +15,12 @@ abstract class UserInfoState extends Equatable {
 /// The loading state of the [UserInfoCubit]
 @immutable
 class UserInfoLoadingState extends UserInfoState {
-  const UserInfoLoadingState();
+  final String message;
+
+  const UserInfoLoadingState({this.message = ''});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 /// The loaded state of the [UserInfoCubit]
@@ -30,15 +32,6 @@ class UserInfoLoadedState extends UserInfoState {
 
   @override
   List<Object> get props => [user];
-}
-
-/// The no state of the [UserInfoCubit]
-@immutable
-class UserInfoNoState extends UserInfoState {
-  const UserInfoNoState();
-
-  @override
-  List<Object> get props => [];
 }
 
 /// The error state of the [UserInfoCubit]

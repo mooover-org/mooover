@@ -5,12 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
+import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
+import 'package:mooover/utils/cubits/pedestrian_status/pedestrian_status_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
-import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
+import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
+import 'package:mooover/utils/domain/initializable.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
-import 'package:mooover/utils/services/steps_services.dart';
 
 import 'utils/cubits/app_theme/app_theme_cubit.dart';
 import 'utils/cubits/app_theme/app_theme_states.dart';
@@ -23,30 +24,50 @@ void main() async {
     await AppConfig.loadForProduction();
   }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const App());
+  runApp(App());
 }
 
 /// The main application widget.
-class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
-
-  @override
-  State<App> createState() => _AppState();
-}
-
-class _AppState extends State<App> {
+class App extends StatelessWidget {
   final _router = AppRouter();
   final _appThemeCubit = AppThemeCubit();
-  final _userStepsCubit = UserStepsCubit();
-  final _groupStepsCubit = GroupStepsCubit();
+  final _leaderboardCubit = LeaderboardCubit();
+  final _userInfoCubit = UserInfoCubit();
+  final _groupInfoCubit = GroupInfoCubit();
+  final _userSessionCubit = UserSessionCubit();
+  final _pedestrianStatusCubit = PedestrianStatusCubit();
 
-  @override
-  void initState() {
-    super.initState();
-    StepsServices(hotReloadCallback: () {
-      _userStepsCubit.hotReloadStepsData();
-      _groupStepsCubit.hotReloadStepsData();
-    });
+  App({Key? key}) : super(key: key) {
+    _userSessionCubit.cubits = <Initializable>[
+      _appThemeCubit,
+      _leaderboardCubit,
+      _userInfoCubit,
+      _groupInfoCubit,
+    ];
+    _userSessionCubit.initialize();
+    _runFast();
+    _runSlow();
+  }
+
+  Future<void> _runFast() async {
+    while (true) {
+      await Future.delayed(Duration(seconds: AppConfig().stepsUpdateInterval));
+      if (_userSessionCubit.state is UserSessionLoadedState) {
+        _pedestrianStatusCubit.hotReload();
+      }
+    }
+  }
+
+  Future<void> _runSlow() async {
+    while (true) {
+      await Future.delayed(Duration(seconds: AppConfig().stepsUpdateInterval
+          * 2));
+      if (_userSessionCubit.state is UserSessionLoadedState) {
+        _userInfoCubit.hotReload();
+        _groupInfoCubit.hotReload();
+        _leaderboardCubit.hotReload();
+      }
+    }
   }
 
   @override
@@ -54,44 +75,35 @@ class _AppState extends State<App> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => UserSessionCubit(),
+          create: (context) => _appThemeCubit,
         ),
         BlocProvider(
-          create: (_) => UserInfoCubit(),
+          create: (context) => _leaderboardCubit,
         ),
         BlocProvider(
-          create: (_) => _userStepsCubit,
+          create: (context) => _userInfoCubit,
         ),
         BlocProvider(
-          create: (_) => GroupInfoCubit(),
+          create: (context) => _groupInfoCubit,
         ),
         BlocProvider(
-          create: (_) => _groupStepsCubit,
+          create: (context) => _userSessionCubit,
         ),
         BlocProvider(
-          create: (_) => _appThemeCubit,
+          create: (context) => _pedestrianStatusCubit,
         ),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(
         bloc: _appThemeCubit,
         builder: (context, state) {
-          if (state is AppThemeLoadedState) {
-            return MaterialApp.router(
-              title: 'Mooover',
-              debugShowCheckedModeBanner: false,
-              theme: appThemes[state.appTheme],
-              routerDelegate: _router.delegate(),
-              routeInformationParser: _router.defaultRouteParser(),
-            );
-          } else {
-            return MaterialApp.router(
-              title: 'Mooover',
-              debugShowCheckedModeBanner: false,
-              theme: appThemes[AppTheme.light],
-              routerDelegate: _router.delegate(),
-              routeInformationParser: _router.defaultRouteParser(),
-            );
-          }
+          return MaterialApp.router(
+            title: 'Mooover',
+            debugShowCheckedModeBanner: false,
+            theme: appThemes[
+                state is AppThemeLoadedState ? state.appTheme : AppTheme.light],
+            routerDelegate: _router.delegate(),
+            routeInformationParser: _router.defaultRouteParser(),
+          );
         },
       ),
     );

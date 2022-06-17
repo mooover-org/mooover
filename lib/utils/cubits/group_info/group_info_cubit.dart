@@ -3,45 +3,65 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_states.dart';
 import 'package:mooover/utils/domain/group.dart';
+import 'package:mooover/utils/domain/initializable.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class GroupInfoCubit extends Cubit<GroupInfoState> {
+class GroupInfoCubit extends Cubit<GroupInfoState> implements Initializable {
   GroupInfoCubit(
       {GroupInfoState initialState = const GroupInfoNoState(<Group>[])})
       : super(initialState);
 
+  @override
+  Future<void> initialize() async {
+    await load();
+  }
+
+  @override
+  Future<void> dispose() async {
+    emit(const GroupInfoErrorState('Group info not available'));
+  }
+
   /// This method is used to load the group info.
-  Future<void> loadGroupInfo() async {
+  Future<void> load() async {
     emit(const GroupInfoLoadingState());
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
         log('Group info loaded');
       } else {
         List<Group> groups = await GroupServices().getGroups();
         emit(GroupInfoNoState(groups));
-        log('Group list loaded');
+        log('Groups list loaded');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
-  /// This method is used to remove the group info.
-  Future<void> removeGroupInfo() async {
-    emit(const GroupInfoLoadingState());
+  Future<void> hotReload() async {
     try {
-      List<Group> groups = await GroupServices().getGroups();
-      emit(GroupInfoNoState(groups));
-      log('Group info removed');
+      final group = await UserServices()
+          .getGroupOfUser(UserSessionServices().getUserId());
+      if (group != null) {
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
+        log('Group info hot reloaded');
+      } else {
+        List<Group> groups = await GroupServices().getGroups();
+        emit(GroupInfoNoState(groups));
+        log('Groups list hot reloaded');
+      }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
@@ -54,15 +74,17 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
       if (group != null) {
         group.dailyStepsGoal = newDailyStepsGoal;
         await GroupServices().updateGroup(group);
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
         log('Group daily steps goal changed');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
+        log('The user is not part of any group');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
@@ -75,15 +97,17 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
       if (group != null) {
         group.weeklyStepsGoal = newWeeklyStepsGoal;
         await GroupServices().updateGroup(group);
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
         log('Group weekly steps goal changed');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
+        log('The user is not part of any group');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
@@ -96,6 +120,7 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
       log('Searched group loaded');
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Groups list error: $e');
     }
   }
 
@@ -107,12 +132,18 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
           .createGroup(UserSessionServices().getUserId(), nickname, name);
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
-      final groups = await GroupServices().getGroups();
-      final members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(groups, group, members));
-      log('Group created');
+      if (group != null) {
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
+        log('Group created');
+      } else {
+        emit(const GroupInfoErrorState('The user is not part of any group'));
+        log('The user is not part of any group');
+      }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
@@ -124,12 +155,18 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
           .addMemberToGroup(UserSessionServices().getUserId(), nickname);
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
-      final groups = await GroupServices().getGroups();
-      final members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(groups, group, members));
-      log('Group joined');
+      if (group != null) {
+        final members = await GroupServices()
+            .getMembersOfGroup(group.id, orderedBySteps: true);
+        emit(GroupInfoLoadedState(group, members));
+        log('Group joined');
+      } else {
+        emit(const GroupInfoErrorState('The user is not part of any group'));
+        log('The user is not part of any group');
+      }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 
@@ -138,13 +175,19 @@ class GroupInfoCubit extends Cubit<GroupInfoState> {
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
-      await GroupServices()
-          .removeMemberFromGroup(UserSessionServices().getUserId(), group!.id);
-      final groups = await GroupServices().getGroups();
-      emit(GroupInfoNoState(groups));
-      log('Group left');
+      if (group != null) {
+        await GroupServices()
+            .removeMemberFromGroup(UserSessionServices().getUserId(), group.id);
+        final groups = await GroupServices().getGroups();
+        emit(GroupInfoNoState(groups));
+        log('Group left');
+      } else {
+        emit(const GroupInfoErrorState('The user is not part of any group'));
+        log('The user is not part of any group');
+      }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      log('Group info error: $e');
     }
   }
 }

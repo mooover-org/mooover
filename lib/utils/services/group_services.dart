@@ -53,9 +53,6 @@ class GroupServices {
       final List<Group> groups = jsonDecode(response.body)
           .map<Group>((group) => Group.fromJson(group))
           .toList();
-      if (nickname == '') {
-        groups.sort((a, b) => a.thisWeekSteps - b.thisWeekSteps);
-      }
       log('Got groups: $groups');
       return groups;
     } else {

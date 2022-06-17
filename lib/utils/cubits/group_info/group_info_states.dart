@@ -16,23 +16,24 @@ abstract class GroupInfoState extends Equatable {
 /// The loading state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadingState extends GroupInfoState {
-  const GroupInfoLoadingState();
+  final String message;
+
+  const GroupInfoLoadingState({this.message = ''});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 /// The loaded state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadedState extends GroupInfoState {
-  final List<Group> groups;
   final Group group;
   final List<User> members;
 
-  const GroupInfoLoadedState(this.groups, this.group, this.members);
+  const GroupInfoLoadedState(this.group, this.members);
 
   @override
-  List<Object> get props => [groups, group, members];
+  List<Object> get props => [group, members];
 }
 
 /// The no state of the [GroupInfoCubit]

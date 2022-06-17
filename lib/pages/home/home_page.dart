@@ -5,14 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/pages/home/components/dashboard.dart';
 import 'package:mooover/pages/home/components/leaderboard.dart';
-import 'package:mooover/utils/cubits/app_theme/app_theme_cubit.dart';
-import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
-import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 
@@ -30,24 +26,8 @@ class HomePage extends StatelessWidget {
           log('HomePage: listener: state is $state');
           if (state is UserSessionNoState) {
             log('HomePage: listener: not logged in');
-            await BlocProvider.of<UserInfoCubit>(context).removeUserInfo();
-            await BlocProvider.of<UserStepsCubit>(context).removeStepsData();
-            await BlocProvider.of<GroupInfoCubit>(context).removeGroupInfo();
-            await BlocProvider.of<GroupStepsCubit>(context).removeStepsData();
-            await BlocProvider.of<AppThemeCubit>(context).removeAppTheme();
-            log('HomePage: listener: user info removed');
             context.router.pushNamed('/login');
             log('HomePage: listener: pushed login');
-          } else if (state is UserSessionLoadedState &&
-              BlocProvider.of<UserInfoCubit>(context).state
-                  is UserInfoNoState) {
-            log('HomePage: listener: logged in and user info not loaded');
-            await BlocProvider.of<UserInfoCubit>(context).loadUserInfo();
-            await BlocProvider.of<UserStepsCubit>(context).loadStepsData();
-            await BlocProvider.of<GroupInfoCubit>(context).loadGroupInfo();
-            await BlocProvider.of<GroupStepsCubit>(context).loadStepsData();
-            await BlocProvider.of<AppThemeCubit>(context).loadAppTheme();
-            log('HomePage: listener: user info loading');
           }
         },
         builder: (context, state) {
