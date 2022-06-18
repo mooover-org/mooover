@@ -8,11 +8,12 @@ import 'package:mooover/utils/services/user_session_services.dart';
 class MembershipCubit extends Cubit<MembershipState> {
   MembershipCubit({MembershipState initialState = const MembershipNoState()})
       : super(initialState) {
-    load();
+    loadMembership();
   }
 
-  Future<void> load() async {
+  Future<void> loadMembership() async {
     emit(const MembershipLoadingState());
+    logger.d('Membership state loading');
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
@@ -21,30 +22,47 @@ class MembershipCubit extends Cubit<MembershipState> {
         logger.d('Membership state loaded: ${group.id}');
       } else {
         emit(const MembershipNoState());
-        logger.d('No membership state loaded');
+        logger.d('Membership state loaded: no group');
       }
     } catch (e) {
       emit(MembershipErrorState(e.toString()));
-      logger.e('Membership error state loaded: $e');
+      logger.e('Membership state error: $e');
+    }
+  }
+
+  /// This method is used to create a new group.
+  Future<void> createGroup(String nickname, String name) async {
+    emit(const MembershipLoadingState());
+    logger.d('Membership state loading');
+    try {
+      await GroupServices()
+          .createGroup(UserSessionServices().getUserId(), nickname, name);
+      emit(MembershipLoadedState(nickname));
+      logger.d('Membership state changed: $nickname created');
+    } catch (e) {
+      emit(MembershipErrorState(e.toString()));
+      logger.e('Membership state error: $e');
     }
   }
 
   /// This method is used to join a group.
   Future<void> joinGroup(String groupId) async {
     emit(const MembershipLoadingState());
+    logger.d('Membership state loading');
     try {
       await GroupServices()
           .addMemberToGroup(UserSessionServices().getUserId(), groupId);
       emit(MembershipLoadedState(groupId));
-      logger.d('Membership state loaded: $groupId');
+      logger.d('Membership state changed: $groupId joined');
     } catch (e) {
       emit(MembershipErrorState(e.toString()));
-      logger.e('Membership error state loaded: $e');
+      logger.e('Membership state error: $e');
     }
   }
 
   Future<void> leaveGroup() async {
     emit(const MembershipLoadingState());
+    logger.d('Membership state loading');
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
@@ -52,15 +70,14 @@ class MembershipCubit extends Cubit<MembershipState> {
         await GroupServices()
             .removeMemberFromGroup(UserSessionServices().getUserId(), group.id);
         emit(const MembershipNoState());
-        logger.d('No membership state loaded');
+        logger.d('Membership state changed: left group');
       } else {
         emit(const MembershipErrorState('The user is not part of any group'));
-        logger.w(
-            'Membership error state loaded: The user is not part of any group');
+        logger.e('Membership state error: The user is not part of any group');
       }
     } catch (e) {
       emit(MembershipErrorState(e.toString()));
-      logger.e('Membership error state loaded: $e');
+      logger.e('Membership state error: $e');
     }
   }
 }

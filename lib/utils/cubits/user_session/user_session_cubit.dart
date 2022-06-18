@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
 /// The user session [Cubit].
@@ -17,43 +16,46 @@ class UserSessionCubit extends Cubit<UserSessionState> {
   /// Performs a last session loading action.
   Future<void> loadLastSession() async {
     emit(const UserSessionLoadingState());
+    logger.d('User session state loading');
     try {
       await UserSessionServices().loadLastSession();
       emit(const UserSessionLoadedState());
-      log('Last user session loaded');
+      logger.d('User session state loaded');
     } catch (_) {
       emit(const UserSessionNoState());
-      log('No last user session found');
+      logger.d('User session state loaded: no session');
     }
   }
 
   /// Performs a login action.
   Future<void> login() async {
     emit(const UserSessionLoadingState());
+    logger.d('User session state loading');
     try {
       await UserSessionServices().login();
       emit(const UserSessionLoadedState());
-      log('User session logged in');
+      logger.d('User session state loaded');
     } catch (_) {
       emit(const UserSessionNoState());
-      log('User session login failed');
+      logger.d('User session state loaded: no session');
     }
   }
 
   /// Performs a logout action.
   Future<void> logout() async {
     emit(const UserSessionLoadingState());
+    logger.d('User session state loading');
     try {
       await UserSessionServices().logout();
       emit(const UserSessionNoState());
-      log('User session logged out');
+      logger.d('User session state loaded: no session');
     } catch (_) {
       if (UserSessionServices().liveUserSession()) {
         emit(const UserSessionLoadedState());
-        log('User session still logged in');
+        logger.d('User session state loaded');
       } else {
         emit(const UserSessionNoState());
-        log('User session logout failed');
+        logger.d('User session state loaded: no session');
       }
     }
   }

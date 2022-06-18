@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
 import 'package:mooover/utils/domain/user.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
@@ -17,6 +16,7 @@ class UserInfoCubit extends Cubit<UserInfoState> {
   /// This method is used to load the user info.
   Future<void> loadUserInfo() async {
     emit(const UserInfoLoadingState());
+    logger.d('User info state loading');
     try {
       User user =
           await UserServices().getUser(UserSessionServices().getUserId());
@@ -30,16 +30,17 @@ class UserInfoCubit extends Cubit<UserInfoState> {
         user.dailyStepsGoal,
         user.weeklyStepsGoal,
       ));
-      log('User info loaded');
+      logger.d('User info state loaded: $user');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
-      log('User info error: $e');
+      logger.e('User info state error: $e');
     }
   }
 
   /// This method is used to change the daily steps goal.
   Future<void> changeDailyStepsGoal(int newDailyStepsGoal) async {
     emit(const UserInfoLoadingState());
+    logger.d('User daily steps goal state loading');
     try {
       User user =
           await UserServices().getUser(UserSessionServices().getUserId());
@@ -55,16 +56,17 @@ class UserInfoCubit extends Cubit<UserInfoState> {
         user.dailyStepsGoal,
         user.weeklyStepsGoal,
       ));
-      log('User daily steps goal changed');
+      logger.d('User daily steps goal state changed: $newDailyStepsGoal');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
-      log('User info error: $e');
+      logger.e('User daily steps goal state error: $e');
     }
   }
 
   /// This method is used to change the weekly steps goal.
   Future<void> changeWeeklyStepsGoal(int newWeeklyStepsGoal) async {
     emit(const UserInfoLoadingState());
+    logger.d('User weekly steps goal state loading');
     try {
       User user =
           await UserServices().getUser(UserSessionServices().getUserId());
@@ -80,10 +82,10 @@ class UserInfoCubit extends Cubit<UserInfoState> {
         user.dailyStepsGoal,
         user.weeklyStepsGoal,
       ));
-      log('User weekly steps goal changed');
+      logger.d('User weekly steps goal state changed: $newWeeklyStepsGoal');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
-      log('User info error: $e');
+      logger.e('User weekly steps goal state error: $e');
     }
   }
 }

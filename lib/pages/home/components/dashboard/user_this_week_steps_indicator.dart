@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/steps_info/user_steps_cubit.dart';
-import 'package:mooover/utils/cubits/steps_info/user_steps_states.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_states.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 import 'package:percent_indicator/percent_indicator.dart';

@@ -1,57 +1,42 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/steps_info/user_steps_states.dart';
-import 'package:mooover/utils/domain/initializable.dart';
-import 'package:mooover/utils/domain/observer.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_states.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/steps_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class UserStepsCubit extends Cubit<UserStepsState>
-    implements Initializable, Observer {
+class UserStepsCubit extends Cubit<UserStepsState> {
   UserStepsCubit(
       {initialState = const UserStepsErrorState('User steps unavailable')})
-      : super(initialState);
-
-  @override
-  Future<void> initialize() async {
-    await load();
+      : super(initialState) {
+    loadUserSteps();
   }
 
-  @override
-  Future<void> dispose() async {
-    emit(const UserStepsErrorState('User steps not available'));
-  }
-
-  @override
-  void update() {
-    hotReload();
-  }
-
-  Future<void> load() async {
+  Future<void> loadUserSteps() async {
     emit(const UserStepsLoadingState());
+    logger.d('User steps state loading');
     try {
       final userSteps =
           await StepsServices().getUserSteps(UserSessionServices().getUserId());
       emit(UserStepsLoadedState(userSteps['today_steps'] as int,
           userSteps['this_week_steps'] as int));
-      log('User steps loaded');
+      logger.d('User steps state loaded: $userSteps');
     } catch (e) {
       emit(UserStepsErrorState(e.toString()));
-      log('User steps error: $e');
+      logger.e('User steps state error: $e');
     }
   }
 
-  Future<void> hotReload() async {
+  Future<void> reloadUserSteps() async {
+    logger.d('User steps state reloading');
     try {
       final userSteps =
           await StepsServices().getUserSteps(UserSessionServices().getUserId());
       emit(UserStepsLoadedState(userSteps['today_steps'] as int,
           userSteps['this_week_steps'] as int));
-      log('User steps loaded');
+      logger.d('User steps state reloaded: $userSteps');
     } catch (e) {
       emit(UserStepsErrorState(e.toString()));
-      log('User steps error: $e');
+      logger.e('User steps state error: $e');
     }
   }
 }

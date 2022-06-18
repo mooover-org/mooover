@@ -30,14 +30,12 @@ class GroupInfoLoadedState extends GroupInfoState {
   final String name;
   final int dailyStepsGoal;
   final int weeklyStepsGoal;
-  final List<User> members;
 
   const GroupInfoLoadedState(
     this.nickname,
     this.name,
     this.dailyStepsGoal,
     this.weeklyStepsGoal,
-    this.members,
   );
 
   @override
@@ -46,7 +44,6 @@ class GroupInfoLoadedState extends GroupInfoState {
         name,
         dailyStepsGoal,
         weeklyStepsGoal,
-        members,
       ];
 }
 
