@@ -2,47 +2,35 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
-import 'package:mooover/utils/domain/initializable.dart';
 import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class UserInfoCubit extends Cubit<UserInfoState> implements Initializable {
+class UserInfoCubit extends Cubit<UserInfoState> {
   UserInfoCubit(
       {UserInfoState initialState =
           const UserInfoErrorState('No user info available')})
-      : super(initialState);
-
-  @override
-  Future<void> initialize() async {
-    await load();
-  }
-
-  @override
-  Future<void> dispose() async {
-    emit(const UserInfoErrorState('User info not available'));
+      : super(initialState) {
+    loadUserInfo();
   }
 
   /// This method is used to load the user info.
-  Future<void> load() async {
+  Future<void> loadUserInfo() async {
     emit(const UserInfoLoadingState());
     try {
       User user =
           await UserServices().getUser(UserSessionServices().getUserId());
-      emit(UserInfoLoadedState(user));
+      emit(UserInfoLoadedState(
+        user.name,
+        user.givenName,
+        user.familyName,
+        user.nickname,
+        user.email,
+        user.picture,
+        user.dailyStepsGoal,
+        user.weeklyStepsGoal,
+      ));
       log('User info loaded');
-    } catch (e) {
-      emit(UserInfoErrorState(e.toString()));
-      log('User info error: $e');
-    }
-  }
-
-  Future<void> hotReload() async {
-    try {
-      User user =
-      await UserServices().getUser(UserSessionServices().getUserId());
-      emit(UserInfoLoadedState(user));
-      log('User info hot reloaded');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
       log('User info error: $e');
@@ -57,7 +45,16 @@ class UserInfoCubit extends Cubit<UserInfoState> implements Initializable {
           await UserServices().getUser(UserSessionServices().getUserId());
       user.dailyStepsGoal = newDailyStepsGoal;
       await UserServices().updateUser(user);
-      emit(UserInfoLoadedState(user));
+      emit(UserInfoLoadedState(
+        user.name,
+        user.givenName,
+        user.familyName,
+        user.nickname,
+        user.email,
+        user.picture,
+        user.dailyStepsGoal,
+        user.weeklyStepsGoal,
+      ));
       log('User daily steps goal changed');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
@@ -73,7 +70,16 @@ class UserInfoCubit extends Cubit<UserInfoState> implements Initializable {
           await UserServices().getUser(UserSessionServices().getUserId());
       user.weeklyStepsGoal = newWeeklyStepsGoal;
       await UserServices().updateUser(user);
-      emit(UserInfoLoadedState(user));
+      emit(UserInfoLoadedState(
+        user.name,
+        user.givenName,
+        user.familyName,
+        user.nickname,
+        user.email,
+        user.picture,
+        user.dailyStepsGoal,
+        user.weeklyStepsGoal,
+      ));
       log('User weekly steps goal changed');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));

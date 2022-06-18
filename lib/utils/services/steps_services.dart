@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
@@ -11,19 +12,14 @@ import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// The services for the steps and pedestrian statuses.
-class StepsServices {
+class StepsServices extends Observable {
   static final _instance = StepsServices._();
 
   StepsServices._() {
     _initPedometer();
   }
 
-  factory StepsServices({Function? hotReloadCallback}) {
-    if (hotReloadCallback != null) {
-      _instance._hotReloadCallback = hotReloadCallback;
-    }
-    return _instance;
-  }
+  factory StepsServices() => _instance;
 
   final http.Client _httpClient = InterceptedClient.build(interceptors: [
     AuthInterceptor(),
@@ -31,9 +27,13 @@ class StepsServices {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   int _stepCount = 0;
-  String _pedestrianStatus = "Unknown";
+  String _pedestrianStatus = "unknown";
   DateTime _timeStamp = DateTime.now();
-  Function? _hotReloadCallback;
+
+  /// Get the pedestrian status.
+  String getPedestrianStatus() {
+    return _pedestrianStatus;
+  }
 
   /// Initialize the pedometer.
   Future<void> _initPedometer() async {
@@ -61,7 +61,6 @@ class StepsServices {
   /// What happens when the step counter is updated.
   void _onStepCountChanged(StepCount event) {
     _stepCount = event.steps;
-    log('Time difference: ${event.timeStamp.difference(_timeStamp).inSeconds}');
     if (event.timeStamp.difference(_timeStamp).inSeconds >
         AppConfig().stepsUpdateInterval) {
       _timeStamp = event.timeStamp;
@@ -77,12 +76,7 @@ class StepsServices {
   /// What happens when the pedestrian status is updated.
   void _onPedestrianStatusChanged(PedestrianStatus event) {
     _pedestrianStatus = event.status;
-    log('Time difference: ${event.timeStamp.difference(_timeStamp).inSeconds}');
-    if (event.timeStamp.difference(_timeStamp).inSeconds >
-        AppConfig().stepsUpdateInterval) {
-      _timeStamp = event.timeStamp;
-      _updateSteps();
-    }
+    _updatePedestrianStatus();
   }
 
   /// What happens when the pedestrian status encounters an error.
@@ -125,11 +119,52 @@ class StepsServices {
     } catch (error) {
       log('Error updating steps: $error');
     }
-    log("Steps updated: $_stepCount, $_pedestrianStatus");
+    log("Steps updated: $_stepCount");
+    for (final observer in observers) {
+      observer.update();
+    }
   }
 
-  /// Get the pedestrian status.
-  String getPedestrianStatus() {
-    return _pedestrianStatus;
+  void _updatePedestrianStatus() {
+    log("Pedestrian status updated: $_pedestrianStatus");
+    for (final observer in observers) {
+      observer.update();
+    }
+  }
+
+  Future<Map<String, int>> getUserSteps(String userId) async {
+    final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
+        '${AppConfig().userServicesPath}/$userId/steps')));
+    if (response.statusCode == 200) {
+      final todaySteps = json.decode(response.body)['today_steps'];
+      final thisWeekSteps = json.decode(response.body)['this_week_steps'];
+      log("User today steps: $todaySteps");
+      log("User this week steps: $thisWeekSteps");
+      return {
+        'today_steps': todaySteps,
+        'this_week_steps': thisWeekSteps,
+      };
+    } else {
+      throw Exception(
+          "Failed to get user steps: ${jsonDecode(response.body)['detail']}");
+    }
+  }
+
+  Future<Map<String, int>> getGroupSteps(String groupId) async {
+    final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
+        '${AppConfig().groupServicesPath}/$groupId/steps')));
+    if (response.statusCode == 200) {
+      final todaySteps = json.decode(response.body)['today_steps'];
+      final thisWeekSteps = json.decode(response.body)['this_week_steps'];
+      log("Group today steps: $todaySteps");
+      log("Group this week steps: $thisWeekSteps");
+      return {
+        'today_steps': todaySteps,
+        'this_week_steps': thisWeekSteps,
+      };
+    } else {
+      throw Exception(
+          "Failed to get group steps: ${jsonDecode(response.body)['detail']}");
+    }
   }
 }

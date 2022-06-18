@@ -2,28 +2,16 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
-import 'package:mooover/utils/domain/initializable.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
 /// The user session [Cubit].
 ///
 /// It manages the [UserSessionState] changes.
-class UserSessionCubit extends Cubit<UserSessionState> implements Initializable {
-  List<Initializable> cubits;
-
+class UserSessionCubit extends Cubit<UserSessionState> {
   UserSessionCubit({
     UserSessionState initialState = const UserSessionNoState(),
-    this.cubits = const [],
-  }) : super(initialState);
-
-  @override
-  Future<void> initialize() async {
-    await loadLastSession();
-  }
-
-  @override
-  Future<void> dispose() async {
-    await logout();
+  }) : super(initialState) {
+    loadLastSession();
   }
 
   /// Performs a last session loading action.
@@ -31,7 +19,6 @@ class UserSessionCubit extends Cubit<UserSessionState> implements Initializable 
     emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().loadLastSession();
-      Future.wait(cubits.map((cubit) => cubit.initialize()));
       emit(const UserSessionLoadedState());
       log('Last user session loaded');
     } catch (_) {
@@ -45,7 +32,6 @@ class UserSessionCubit extends Cubit<UserSessionState> implements Initializable 
     emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().login();
-      Future.wait(cubits.map((cubit) => cubit.initialize()));
       emit(const UserSessionLoadedState());
       log('User session logged in');
     } catch (_) {
@@ -59,7 +45,6 @@ class UserSessionCubit extends Cubit<UserSessionState> implements Initializable 
     emit(const UserSessionLoadingState());
     try {
       await UserSessionServices().logout();
-      Future.wait(cubits.map((cubit) => cubit.dispose()));
       emit(const UserSessionNoState());
       log('User session logged out');
     } catch (_) {

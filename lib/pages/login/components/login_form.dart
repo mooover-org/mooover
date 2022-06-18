@@ -13,9 +13,21 @@ class LoginForm extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            "Welcome!\nWe are happy to have you here.",
-            textAlign: TextAlign.center,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Text(
+              "Welcome!",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Text(
+              "We are happy to have you here.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.caption,
+            ),
           ),
           OutlinedButton(
               onPressed: () =>

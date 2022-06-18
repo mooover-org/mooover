@@ -39,7 +39,8 @@ class GroupInfo extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.headlineSmall,
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
                                 ),
                               ),
                             ),
@@ -57,34 +58,7 @@ class GroupInfo extends StatelessWidget {
                             ),
                           ],
                         ),
-                        CircularPercentIndicator(
-                          radius: 60,
-                          lineWidth: 20,
-                          percent: state.group.todaySteps <=
-                              state.group.dailyStepsGoal
-                              ? state.group.todaySteps / state.group.dailyStepsGoal
-                              : 1,
-                          animation: true,
-                          animateFromLastPercent: true,
-                          header: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(
-                              "This Day's Steps",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                          ),
-                          center: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(
-                              state.group.todaySteps.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          progressColor: Theme.of(context).primaryColor,
-                          backgroundColor: Theme.of(context).backgroundColor,
-                          circularStrokeCap: CircularStrokeCap.round,
-                        ),
+                        _buildTodayStepsIndicator(state, context),
                       ],
                     ),
                     Padding(
@@ -123,7 +97,8 @@ class GroupInfo extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: OutlinedButton(
                         onPressed: () =>
-                            BlocProvider.of<GroupInfoCubit>(context).leaveGroup(),
+                            BlocProvider.of<GroupInfoCubit>(context)
+                                .leaveGroup(),
                         child: const Text('Leave'),
                       ),
                     ),
@@ -146,5 +121,38 @@ class GroupInfo extends StatelessWidget {
             );
           }
         });
+  }
+
+  Widget _buildTodayStepsIndicator(
+      GroupInfoLoadedState groupInfoState, BuildContext context) {
+    return BlocBuilder<GroupStepsCubit, GroupStepsState>(
+      child: CircularPercentIndicator(
+        radius: 60,
+        lineWidth: 20,
+        percent: groupInfoState.group.todaySteps <= groupInfoState.group.dailyStepsGoal
+            ? groupInfoState.group.todaySteps / groupInfoState.group.dailyStepsGoal
+            : 1,
+        animation: true,
+        animateFromLastPercent: true,
+        header: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(
+            "This Day's Steps",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.caption,
+          ),
+        ),
+        center: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(
+            groupInfoState.group.todaySteps.toString(),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        progressColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).backgroundColor,
+        circularStrokeCap: CircularStrokeCap.round,
+      ),
+    );
   }
 }

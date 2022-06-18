@@ -34,18 +34,6 @@ class LeaderboardLoadedState extends LeaderboardState {
   List<Object> get props => [groups];
 }
 
-/// The loaded state of the [LeaderboardCubit]
-@immutable
-class LeaderboardMembershipState extends LeaderboardState {
-  final List<Group> groups;
-  final Group group;
-
-  const LeaderboardMembershipState(this.groups, this.group);
-
-  @override
-  List<Object> get props => [groups, group];
-}
-
 /// The error state of the [LeaderboardCubit]
 @immutable
 class LeaderboardErrorState extends LeaderboardState {

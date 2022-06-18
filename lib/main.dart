@@ -4,26 +4,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
-import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
-import 'package:mooover/utils/cubits/pedestrian_status/pedestrian_status_cubit.dart';
-import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
-import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
-import 'package:mooover/utils/domain/initializable.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 
 import 'utils/cubits/app_theme/app_theme_cubit.dart';
 import 'utils/cubits/app_theme/app_theme_states.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  logger.d('Widget binding initialized');
   if (kDebugMode) {
     await AppConfig.loadForDevelopment();
+    logger.d('AppConfig loaded for development');
   } else {
     await AppConfig.loadForProduction();
+    logger.d('AppConfig loaded for production');
   }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  logger.d('SystemChrome set to portrait');
+  logger.i('Starting app');
   runApp(App());
 }
 
@@ -31,66 +31,24 @@ void main() async {
 class App extends StatelessWidget {
   final _router = AppRouter();
   final _appThemeCubit = AppThemeCubit();
-  final _leaderboardCubit = LeaderboardCubit();
-  final _userInfoCubit = UserInfoCubit();
-  final _groupInfoCubit = GroupInfoCubit();
-  final _userSessionCubit = UserSessionCubit();
-  final _pedestrianStatusCubit = PedestrianStatusCubit();
 
-  App({Key? key}) : super(key: key) {
-    _userSessionCubit.cubits = <Initializable>[
-      _appThemeCubit,
-      _leaderboardCubit,
-      _userInfoCubit,
-      _groupInfoCubit,
-    ];
-    _userSessionCubit.initialize();
-    _runFast();
-    _runSlow();
-  }
-
-  Future<void> _runFast() async {
-    while (true) {
-      await Future.delayed(Duration(seconds: AppConfig().stepsUpdateInterval));
-      if (_userSessionCubit.state is UserSessionLoadedState) {
-        _pedestrianStatusCubit.hotReload();
-      }
-    }
-  }
-
-  Future<void> _runSlow() async {
-    while (true) {
-      await Future.delayed(Duration(seconds: AppConfig().stepsUpdateInterval
-          * 2));
-      if (_userSessionCubit.state is UserSessionLoadedState) {
-        _userInfoCubit.hotReload();
-        _groupInfoCubit.hotReload();
-        _leaderboardCubit.hotReload();
-      }
-    }
-  }
+  App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => _appThemeCubit,
+          create: (context) {
+            logger.d('Providing app theme cubit');
+            return _appThemeCubit;
+          },
         ),
         BlocProvider(
-          create: (context) => _leaderboardCubit,
-        ),
-        BlocProvider(
-          create: (context) => _userInfoCubit,
-        ),
-        BlocProvider(
-          create: (context) => _groupInfoCubit,
-        ),
-        BlocProvider(
-          create: (context) => _userSessionCubit,
-        ),
-        BlocProvider(
-          create: (context) => _pedestrianStatusCubit,
+          create: (context) {
+            logger.d('Creating and providing user session cubit');
+            return UserSessionCubit();
+          },
         ),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(

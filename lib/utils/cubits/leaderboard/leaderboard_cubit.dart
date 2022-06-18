@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/leaderboard/leaderboard_states.dart';
 import 'package:mooover/utils/domain/group.dart';
 import 'package:mooover/utils/domain/initializable.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
 class LeaderboardCubit extends Cubit<LeaderboardState>
-    implements Initializable {
+    implements Initializable, Observer {
   LeaderboardCubit({initialState = const LeaderboardLoadedState([])})
       : super(initialState);
 
@@ -21,6 +22,11 @@ class LeaderboardCubit extends Cubit<LeaderboardState>
   @override
   Future<void> dispose() async {
     emit(const LeaderboardErrorState('Leaderboard unavailable'));
+  }
+
+  @override
+  void update() {
+    hotReload();
   }
 
   /// Performs a leaderboard loading action.

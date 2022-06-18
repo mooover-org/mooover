@@ -14,13 +14,12 @@ class UserInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserInfoCubit, UserInfoState>(
-      bloc: BlocProvider.of<UserInfoCubit>(context),
-      builder: (context, state) {
-        if (state is UserInfoLoadedState) {
-          return Panel(
-            child: Center(
-              child: Column(
+    return Panel(
+      child: Center(
+        child: BlocBuilder<UserInfoCubit, UserInfoState>(
+          builder: (context, state) {
+            if (state is UserInfoLoadedState) {
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -28,13 +27,13 @@ class UserInfo extends StatelessWidget {
                     padding: const EdgeInsets.all(10.0),
                     child: CircleAvatar(
                       radius: 80,
-                      backgroundImage: NetworkImage(state.user.picture),
+                      backgroundImage: NetworkImage(state.picture),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 5.0),
                     child: Text(
-                      state.user.name,
+                      state.name,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
@@ -42,14 +41,14 @@ class UserInfo extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(5.0),
                     child: Text(
-                      state.user.nickname,
+                      state.nickname,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0,
-                        horizontal: 30.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 30.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,7 +59,7 @@ class UserInfo extends StatelessWidget {
                           style: Theme.of(context).textTheme.caption,
                         ),
                         Text(
-                          state.user.givenName,
+                          state.givenName,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -68,8 +67,8 @@ class UserInfo extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0,
-                        horizontal: 30.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 30.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,7 +79,7 @@ class UserInfo extends StatelessWidget {
                           style: Theme.of(context).textTheme.caption,
                         ),
                         Text(
-                          state.user.familyName,
+                          state.familyName,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -88,8 +87,8 @@ class UserInfo extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0,
-                        horizontal: 30.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 30.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +99,7 @@ class UserInfo extends StatelessWidget {
                           style: Theme.of(context).textTheme.caption,
                         ),
                         Text(
-                          state.user.email,
+                          state.email,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         )
@@ -108,20 +107,17 @@ class UserInfo extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-          );
-        } else if (state is UserInfoLoadingState) {
-          return const LoadingDisplay(transparent: true,);
-        } else if (state is UserInfoErrorState) {
-          return ErrorDisplay(
-            message: state.message,
-            transparent: true,
-          );
-        } else {
-          return const ErrorDisplay(transparent: true,);
-        }
-      },
+              );
+            } else if (state is UserInfoLoadingState) {
+              return LoadingDisplay(message: state.message);
+            } else if (state is UserInfoErrorState) {
+              return ErrorDisplay(message: state.message);
+            } else {
+              return const ErrorDisplay();
+            }
+          },
+        ),
+      ),
     );
   }
 }

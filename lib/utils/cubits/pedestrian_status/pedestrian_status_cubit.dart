@@ -3,11 +3,20 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/pedestrian_status/pedestrian_status_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/services/steps_services.dart';
 
-class PedestrianStatusCubit extends Cubit<PedestrianStatusState> {
-  PedestrianStatusCubit({initialState = const PedestrianStatusLoadedState(Icons.question_mark)})
+class PedestrianStatusCubit extends Cubit<PedestrianStatusState>
+    implements Observer {
+  PedestrianStatusCubit(
+      {initialState =
+          const PedestrianStatusLoadedState(Icons.accessibility_new)})
       : super(initialState);
+
+  @override
+  void update() {
+    hotReload();
+  }
 
   Future<void> hotReload() async {
     try {

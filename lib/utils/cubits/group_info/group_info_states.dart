@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/domain/group.dart';
 import 'package:mooover/utils/domain/user.dart';
 
 /// The base state of the [GroupInfoCubit]
@@ -27,24 +26,28 @@ class GroupInfoLoadingState extends GroupInfoState {
 /// The loaded state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadedState extends GroupInfoState {
-  final Group group;
+  final String nickname;
+  final String name;
+  final int dailyStepsGoal;
+  final int weeklyStepsGoal;
   final List<User> members;
 
-  const GroupInfoLoadedState(this.group, this.members);
+  const GroupInfoLoadedState(
+    this.nickname,
+    this.name,
+    this.dailyStepsGoal,
+    this.weeklyStepsGoal,
+    this.members,
+  );
 
   @override
-  List<Object> get props => [group, members];
-}
-
-/// The no state of the [GroupInfoCubit]
-@immutable
-class GroupInfoNoState extends GroupInfoState {
-  final List<Group> groups;
-
-  const GroupInfoNoState(this.groups);
-
-  @override
-  List<Object> get props => [groups];
+  List<Object> get props => [
+        nickname,
+        name,
+        dailyStepsGoal,
+        weeklyStepsGoal,
+        members,
+      ];
 }
 
 /// The error state of the [GroupInfoCubit]

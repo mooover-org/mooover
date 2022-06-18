@@ -14,10 +14,12 @@ abstract class AppThemeState extends Equatable {
 /// The loading state of the [AppThemeCubit]
 @immutable
 class AppThemeLoadingState extends AppThemeState {
-  const AppThemeLoadingState();
+  final String? message;
+
+  const AppThemeLoadingState({this.message});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message ?? ''];
 }
 
 /// The loaded state of the [AppThemeCubit]
@@ -34,10 +36,10 @@ class AppThemeLoadedState extends AppThemeState {
 /// The error state of the [AppThemeCubit]
 @immutable
 class AppThemeErrorState extends AppThemeState {
-  final String message;
+  final String? message;
 
   const AppThemeErrorState(this.message);
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message ?? ''];
 }
