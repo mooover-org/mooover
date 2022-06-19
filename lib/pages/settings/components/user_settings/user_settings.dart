@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/pages/settings/components/user_settings/app_theme_picker.dart';
 import 'package:mooover/pages/settings/components/user_settings/user_info_fields.dart';
+import 'package:mooover/utils/cubits/app_theme/app_theme_cubit.dart';
+import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/widgets/panel.dart';
 
 /// A form to set the user settings.
@@ -33,16 +37,28 @@ class UserSettings extends StatelessWidget {
                 const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'App theme',
                   textAlign: TextAlign.start,
                 ),
-                AppThemePicker(),
+                BlocProvider<AppThemeCubit>(
+                  create: (context) {
+                    logger.d('Creating and providing app theme cubit');
+                    return AppThemeCubit();
+                  },
+                  child: const AppThemePicker(),
+                ),
               ],
             ),
           ),
-          const UserInfoFields(),
+          BlocProvider<UserInfoCubit>(
+            create: (context) {
+              logger.d('Creating and providing user info cubit');
+              return UserInfoCubit();
+            },
+            child: const UserInfoFields(),
+          ),
         ],
       ),
     );

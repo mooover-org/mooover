@@ -6,7 +6,6 @@ import 'package:mooover/pages/home/components/leaderboard/leaderboard.dart';
 import 'package:mooover/pages/home/components/profile_button.dart';
 import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
-import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_states.dart';
@@ -53,30 +52,34 @@ class HomePage extends StatelessWidget {
               ],
             ),
             body: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                BlocProvider<UserStepsCubit>(
+                BlocProvider<UserInfoCubit>(
                   create: (context) {
-                    logger.d('Creating and providing user steps cubit');
-                    return UserStepsCubit();
+                    logger.d('Creating and providing user info cubit');
+                    return UserInfoCubit();
                   },
                   child: const Dashboard(),
                 ),
-                MultiBlocProvider(
-                  providers: [
-                    BlocProvider<LeaderboardCubit>(
-                      create: (context) {
-                        logger.d('Creating and providing leaderboard cubit');
-                        return LeaderboardCubit();
-                      },
-                    ),
-                    BlocProvider<MembershipCubit>(
-                      create: (context) {
-                        logger.d('Creating and providing membership cubit');
-                        return MembershipCubit();
-                      },
-                    ),
-                  ],
-                  child: const Expanded(child: Leaderboard()),
+                Expanded(
+                  child: MultiBlocProvider(
+                    providers: [
+                      BlocProvider<LeaderboardCubit>(
+                        create: (context) {
+                          logger.d('Creating and providing leaderboard cubit');
+                          return LeaderboardCubit();
+                        },
+                      ),
+                      BlocProvider<MembershipCubit>(
+                        create: (context) {
+                          logger.d('Creating and providing membership cubit');
+                          return MembershipCubit();
+                        },
+                      ),
+                    ],
+                    child: const Leaderboard(),
+                  ),
                 ),
               ],
             ),

@@ -4,6 +4,8 @@ import 'package:mooover/pages/home/components/dashboard/user_this_week_steps_ind
 import 'package:mooover/pages/home/components/dashboard/user_today_steps_indicator.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 import 'package:mooover/widgets/panel.dart';
@@ -25,11 +27,23 @@ class Dashboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                UserTodayStepsIndicator(
-                  dailyStepsGoal: state.dailyStepsGoal,
+                BlocProvider<UserStepsCubit>(
+                  create: (context) {
+                    logger.d('Creating and providing user steps cubit');
+                    return UserStepsCubit();
+                  },
+                  child: UserTodayStepsIndicator(
+                    dailyStepsGoal: state.dailyStepsGoal,
+                  ),
                 ),
-                UserThisWeekStepsIndicator(
-                  weeklyStepsGoal: state.weeklyStepsGoal,
+                BlocProvider<UserStepsCubit>(
+                  create: (context) {
+                    logger.d('Creating and providing user steps cubit');
+                    return UserStepsCubit();
+                  },
+                  child: UserThisWeekStepsIndicator(
+                    weeklyStepsGoal: state.weeklyStepsGoal,
+                  ),
                 ),
               ],
             );

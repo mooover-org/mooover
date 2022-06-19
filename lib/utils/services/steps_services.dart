@@ -1,18 +1,17 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// The services for the steps and pedestrian statuses.
-class StepsServices extends Observable {
+class StepsServices {
   static final _instance = StepsServices._();
 
   StepsServices._() {
@@ -32,37 +31,45 @@ class StepsServices extends Observable {
 
   /// Get the pedestrian status.
   String getPedestrianStatus() {
+    logger.d("Getting pedestrian status");
     return _pedestrianStatus;
   }
 
   /// Initialize the pedometer.
   Future<void> _initPedometer() async {
+    logger.d("Initializing pedometer");
     final status = await Permission.activityRecognition.request();
     if (status == PermissionStatus.granted) {
-      log("Activity recognition permission granted");
+      logger.i("Pedometer permissions granted");
       Pedometer.stepCountStream
           .listen(_onStepCountChanged)
           .onError(_onStepCountError);
+      logger.d("Listening to step count stream");
       Pedometer.pedestrianStatusStream
           .listen(_onPedestrianStatusChanged)
           .onError(_onPedestrianStatusError);
-      log("Step counter service started");
+      logger.d("Listening to pedestrian status stream");
     } else if (status == PermissionStatus.denied) {
-      log('Permission denied');
+      logger.w("Pedometer permissions denied");
     } else if (status == PermissionStatus.permanentlyDenied) {
-      log('Permission permanently denied');
+      logger.w("Pedometer permissions permanently denied");
     } else if (status == PermissionStatus.restricted) {
-      log('Permission restricted');
+      logger.w("Pedometer permissions restricted");
     } else if (status == PermissionStatus.limited) {
-      log('Permission limited');
+      logger.w("Pedometer permissions limited");
+    } else {
+      logger.w("Pedometer permissions unknown");
     }
   }
 
   /// What happens when the step counter is updated.
   void _onStepCountChanged(StepCount event) {
+    logger.d("Step count changed: ${event.steps}");
     _stepCount = event.steps;
     if (event.timeStamp.difference(_timeStamp).inSeconds >
         AppConfig().stepsUpdateInterval) {
+      logger.d(
+          "Updating steps after ${event.timeStamp.difference(_timeStamp).inSeconds} seconds");
       _timeStamp = event.timeStamp;
       _updateSteps();
     }
@@ -70,35 +77,37 @@ class StepsServices extends Observable {
 
   /// What happens when the step counter encounters an error.
   void _onStepCountError(error) {
-    log('Step count error: $error');
+    logger.e("Step count error: $error");
   }
 
   /// What happens when the pedestrian status is updated.
   void _onPedestrianStatusChanged(PedestrianStatus event) {
+    logger.d("Pedestrian status changed: ${event.status}");
     _pedestrianStatus = event.status;
     _updatePedestrianStatus();
   }
 
   /// What happens when the pedestrian status encounters an error.
   void _onPedestrianStatusError(error) {
-    log('Pedestrian status error: $error');
+    logger.e("Pedestrian status error: $error");
   }
 
   /// Update the steps on the server and reload the ui state.
   Future<void> _updateSteps() async {
+    logger.d("Updating steps");
     try {
       final lastStepsCountString =
           await _secureStorage.read(key: AppConfig().lastStepsCountKey);
       if (lastStepsCountString != null) {
-        log("Last steps count: $lastStepsCountString");
+        logger.d("Last steps count: $lastStepsCountString");
         final lastStepsCount = int.parse(lastStepsCountString);
         if (lastStepsCount > _stepCount) {
-          log("Steps count has been reset, updating with new value");
+          logger.d("Steps count has been reset, updating with new value");
           await _secureStorage.write(
               key: AppConfig().lastStepsCountKey, value: _stepCount.toString());
         } else {
           final newStepsCount = _stepCount - lastStepsCount;
-          log("New steps count to post: $newStepsCount");
+          logger.d("New steps count to post: $newStepsCount");
           await _httpClient.post(
               Uri.http(AppConfig().apiDomain,
                   '${AppConfig().stepsServicesPath}/${UserSessionServices().getUserId()}'),
@@ -106,63 +115,60 @@ class StepsServices extends Observable {
               body: jsonEncode({
                 'steps': newStepsCount,
               }));
-          log('Posted new steps: $newStepsCount');
+          logger.d('Posted new steps: $newStepsCount');
           await _secureStorage.write(
               key: AppConfig().lastStepsCountKey, value: _stepCount.toString());
-          log('Updated last steps count: $_stepCount');
+          logger.d('Updated last steps count: $_stepCount');
         }
       } else {
-        log("No last steps count");
+        logger.d("No last steps count");
         await _secureStorage.write(
             key: AppConfig().lastStepsCountKey, value: _stepCount.toString());
       }
     } catch (error) {
-      log('Error updating steps: $error');
+      logger.e("Error updating steps: $error");
     }
-    log("Steps updated: $_stepCount");
-    for (final observer in observers) {
-      observer.update();
-    }
+    logger.i("Steps updated: $_stepCount");
   }
 
   void _updatePedestrianStatus() {
-    log("Pedestrian status updated: $_pedestrianStatus");
-    for (final observer in observers) {
-      observer.update();
-    }
+    logger.d("Updating pedestrian status");
+    logger.i("Pedestrian status updated: $_pedestrianStatus");
   }
 
   Future<Map<String, int>> getUserSteps(String userId) async {
+    logger.d("Getting user steps");
     final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
         '${AppConfig().userServicesPath}/$userId/steps')));
     if (response.statusCode == 200) {
       final todaySteps = json.decode(response.body)['today_steps'];
       final thisWeekSteps = json.decode(response.body)['this_week_steps'];
-      log("User today steps: $todaySteps");
-      log("User this week steps: $thisWeekSteps");
+      logger.d("User steps: $todaySteps, $thisWeekSteps");
       return {
         'today_steps': todaySteps,
         'this_week_steps': thisWeekSteps,
       };
     } else {
+      logger.e("Error getting user steps: ${response.body}");
       throw Exception(
           "Failed to get user steps: ${jsonDecode(response.body)['detail']}");
     }
   }
 
   Future<Map<String, int>> getGroupSteps(String groupId) async {
+    logger.d("Getting group steps");
     final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
         '${AppConfig().groupServicesPath}/$groupId/steps')));
     if (response.statusCode == 200) {
       final todaySteps = json.decode(response.body)['today_steps'];
       final thisWeekSteps = json.decode(response.body)['this_week_steps'];
-      log("Group today steps: $todaySteps");
-      log("Group this week steps: $thisWeekSteps");
+      logger.d("Group steps: $todaySteps, $thisWeekSteps");
       return {
         'today_steps': todaySteps,
         'this_week_steps': thisWeekSteps,
       };
     } else {
+      logger.e("Error getting group steps: ${response.body}");
       throw Exception(
           "Failed to get group steps: ${jsonDecode(response.body)['detail']}");
     }

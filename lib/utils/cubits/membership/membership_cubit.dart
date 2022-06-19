@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/membership/membership_states.dart';
+import 'package:mooover/utils/domain/group.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
 class MembershipCubit extends Cubit<MembershipState> {
-  MembershipCubit({MembershipState initialState = const MembershipNoState()})
+  MembershipCubit(
+      {MembershipState initialState = const MembershipLoadingState()})
       : super(initialState) {
     loadMembership();
   }
@@ -21,7 +23,9 @@ class MembershipCubit extends Cubit<MembershipState> {
         emit(MembershipLoadedState(group.id));
         logger.d('Membership state loaded: ${group.id}');
       } else {
-        emit(const MembershipNoState());
+        final groups = await GroupServices().getGroups();
+        emit(MembershipNoState(
+            groups.map((Group group) => group.id).toList()));
         logger.d('Membership state loaded: no group');
       }
     } catch (e) {
@@ -69,7 +73,9 @@ class MembershipCubit extends Cubit<MembershipState> {
       if (group != null) {
         await GroupServices()
             .removeMemberFromGroup(UserSessionServices().getUserId(), group.id);
-        emit(const MembershipNoState());
+        final groups = await GroupServices().getGroups();
+        emit(MembershipNoState(
+            groups.map((Group group) => group.id).toList()));
         logger.d('Membership state changed: left group');
       } else {
         emit(const MembershipErrorState('The user is not part of any group'));

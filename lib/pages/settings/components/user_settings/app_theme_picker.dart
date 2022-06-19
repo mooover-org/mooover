@@ -11,7 +11,6 @@ class AppThemePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppThemeCubit, AppThemeState>(
-      bloc: BlocProvider.of<AppThemeCubit>(context),
       builder: (context, state) {
         if (state is AppThemeLoadedState) {
           return DropdownButton(
@@ -22,13 +21,14 @@ class AppThemePicker extends StatelessWidget {
                     .changeAppTheme(appThemeFromString(newValue));
               }
             },
-            items: AppTheme.values
-                .map<DropdownMenuItem<String>>((AppTheme appTheme) {
-              return DropdownMenuItem<String>(
-                value: appThemeToString(appTheme),
-                child: Text(appThemeToString(appTheme)),
-              );
-            }).toList(),
+            items: AppTheme.values.map<DropdownMenuItem<String>>(
+              (AppTheme appTheme) {
+                return DropdownMenuItem<String>(
+                  value: appThemeToString(appTheme),
+                  child: Text(appThemeToString(appTheme)),
+                );
+              },
+            ).toList(),
             borderRadius: const BorderRadius.all(Radius.circular(10)),
           );
         } else {

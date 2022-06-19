@@ -5,8 +5,8 @@ import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class GroupMembers extends Cubit<GroupMembersState> {
-  GroupMembers(
+class GroupMembersCubit extends Cubit<GroupMembersState> {
+  GroupMembersCubit(
       {GroupMembersState initialState =
           const GroupMembersErrorState('No members available')})
       : super(initialState) {

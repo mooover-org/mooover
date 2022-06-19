@@ -8,7 +8,9 @@ class PedestrianStatusCubit extends Cubit<PedestrianStatusState> {
   PedestrianStatusCubit(
       {initialState =
           const PedestrianStatusLoadedState(Icons.accessibility_new)})
-      : super(initialState);
+      : super(initialState) {
+    loadPedestrianStatus();
+  }
 
   Future<void> loadPedestrianStatus() async {
     emit(const PedestrianStatusLoadingState());

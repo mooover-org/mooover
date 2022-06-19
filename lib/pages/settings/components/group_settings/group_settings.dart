@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/pages/settings/components/group_settings/group_info_fields.dart';
+import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_states.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/widgets/error_display.dart';
 import 'package:mooover/widgets/loading_display.dart';
 import 'package:mooover/widgets/panel.dart';
@@ -35,7 +37,13 @@ class GroupSettings extends StatelessWidget {
                   endIndent: 10,
                   thickness: 1,
                 ),
-                const GroupInfoFields(),
+                BlocProvider<GroupInfoCubit>(
+                  create: (context) {
+                    logger.d('Creating and providing group info cubit');
+                    return GroupInfoCubit();
+                  },
+                  child: const GroupInfoFields(),
+                ),
               ],
             ),
           );
