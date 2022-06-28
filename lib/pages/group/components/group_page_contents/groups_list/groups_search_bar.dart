@@ -32,7 +32,7 @@ class GroupsSearchBar extends StatelessWidget {
               },
               decoration: const InputDecoration(
                 labelText: 'Search',
-                hintText: 'nickname or name',
+                hintText: 'nickname or name...',
                 prefixIcon: Icon(Icons.search),
               ),
             ),

@@ -27,7 +27,7 @@ class GroupsLoadingState extends GroupsState {
 class GroupsLoadedState extends GroupsState {
   final List<Group> groups;
 
-  const GroupsLoadedState( this.groups );
+  const GroupsLoadedState(this.groups);
 
   @override
   List<Object> get props => [groups];

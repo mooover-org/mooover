@@ -41,27 +41,21 @@ class GroupPageContents extends StatelessWidget {
             ],
           );
         } else if (state is MembershipNoState) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              BlocProvider<GroupsCubit>(
-                create: (context) {
-                  logger.d('Creating and providing groups cubit');
-                  return GroupsCubit();
-                },
-                child: GroupsSearchBar(),
-              ),
-              Expanded(
-                child: BlocProvider<GroupsCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing groups cubit');
-                    return GroupsCubit();
-                  },
-                  child: const GroupsList(),
+          return BlocProvider<GroupsCubit>(
+            create: (context) {
+              logger.d('Creating and providing groups cubit');
+              return GroupsCubit();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GroupsSearchBar(),
+                const Expanded(
+                    child: GroupsList(),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         } else if (state is MembershipLoadingState) {
           return LoadingDisplay(message: state.message);
