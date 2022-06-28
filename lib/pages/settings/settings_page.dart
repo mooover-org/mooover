@@ -21,11 +21,8 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         children: [
           const UserSettings(),
-          BlocProvider<MembershipCubit>(
-            create: (context) {
-              logger.d('Creating and providing membership cubit');
-              return MembershipCubit();
-            },
+          BlocProvider<MembershipCubit>.value(
+            value: BlocProvider.of<MembershipCubit>(context),
             child: const GroupSettings(),
           ),
         ],

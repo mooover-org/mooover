@@ -4,7 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
+import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
+import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
+import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
+import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
+import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 
@@ -38,18 +43,13 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) {
-            logger.d('Providing app theme cubit');
-            return _appThemeCubit;
-          },
-        ),
-        BlocProvider(
-          create: (context) {
-            logger.d('Creating and providing user session cubit');
-            return UserSessionCubit();
-          },
-        ),
+        BlocProvider.value(value: _appThemeCubit),
+        BlocProvider(create: (context) => UserSessionCubit()),
+        BlocProvider(create: (context) => UserInfoCubit()),
+        BlocProvider(create: (context) => MembershipCubit()),
+        BlocProvider(create: (context) => GroupInfoCubit()),
+        BlocProvider(create: (context) => UserStepsCubit()),
+        BlocProvider(create: (context) => GroupStepsCubit()),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(
         bloc: _appThemeCubit,

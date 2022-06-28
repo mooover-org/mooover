@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -9,6 +10,7 @@ import 'package:mooover/utils/domain/id_token.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 import 'package:mooover/utils/helpers/logger.dart';
+import 'package:mooover/utils/helpers/operations.dart';
 
 /// The user session services.
 ///
@@ -105,15 +107,16 @@ class UserSessionServices {
       _idToken = IdToken.fromString(response.idToken);
       accessToken = response.accessToken;
       try {
-        final registeredUserResponse = await _httpClient.get(Uri.http(
-            AppConfig().apiDomain,
-            '${AppConfig().userServicesPath}/${_idToken!.sub}'));
+        final registeredUserResponse = await (() => _httpClient.get(Uri.http(
+                AppConfig().apiDomain,
+                '${AppConfig().userServicesPath}/${_idToken!.sub}')))
+            .withRetries(3);
         if (registeredUserResponse.statusCode == 404) {
           logger.d("User not found in database");
           await registerNewUser();
         }
-      } on http.ClientException {
-        logger.e("Failed to check if user is registered");
+      } on HttpException catch (e) {
+        logger.e("Failed to check if user is registered", e);
         throw LoginException();
       }
       await setRefreshToken(response.refreshToken!);
@@ -128,11 +131,11 @@ class UserSessionServices {
   Future<void> registerNewUser() async {
     logger.d("Registering new user");
     try {
-      final userInfo = jsonDecode((await _httpClient
-              .get(Uri.https(AppConfig().auth0Domain, '/userinfo')))
+      final userInfo = jsonDecode((await (() => _httpClient.get(
+              Uri.https(AppConfig().auth0Domain, '/userinfo'))).withRetries(3))
           .body);
       logger.d("User info: $userInfo");
-      final response = await _httpClient
+      final response = await (() => _httpClient
           .post(Uri.http(AppConfig().apiDomain, AppConfig().userServicesPath),
               body: jsonEncode({
                 "sub": userInfo["sub"],
@@ -143,7 +146,7 @@ class UserSessionServices {
                 "email": userInfo["email"],
                 "picture": userInfo["picture"],
               }),
-              headers: {"Content-Type": "application/json"});
+              headers: {"Content-Type": "application/json"})).withRetries(3);
       if (response.statusCode != 200 && response.statusCode != 201) {
         logger.e("Failed to register new user: ${response.statusCode}");
         throw LoginException(message: "could not register user");
@@ -166,17 +169,16 @@ class UserSessionServices {
       await _secureStorage.delete(key: AppConfig().refreshTokenKey);
       accessToken = null;
       logger.d("Cleared refresh and access token");
-      await http.get(
-        Uri.https(
-          AppConfig().auth0Domain,
-          '/v2/logout',
-          {
-            'client_id': AppConfig().auth0ClientId,
-            'federated': '',
-          },
-        ),
-        headers: {'Authorization': 'Bearer $accessToken'},
-      );
+      await (() => _httpClient.get(
+            Uri.https(
+              AppConfig().auth0Domain,
+              '/v2/logout',
+              {
+                'client_id': AppConfig().auth0ClientId,
+                'federated': '',
+              },
+            ),
+          )).withRetries(3);
       logger.i("Logged out");
       return;
     } catch (e) {

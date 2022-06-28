@@ -1,14 +1,27 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_steps/user_steps_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/steps_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class UserStepsCubit extends Cubit<UserStepsState> {
+class UserStepsCubit extends Cubit<UserStepsState> implements Observer {
   UserStepsCubit(
       {initialState = const UserStepsErrorState('User steps unavailable')})
       : super(initialState) {
     loadUserSteps();
+    StepsServices().addObserver(this);
+  }
+
+  @override
+  Future<void> close() {
+    StepsServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadUserSteps();
   }
 
   Future<void> loadUserSteps() async {

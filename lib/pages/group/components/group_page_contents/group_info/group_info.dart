@@ -22,7 +22,7 @@ class GroupInfo extends StatelessWidget {
           if (state is GroupInfoLoadedState) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -59,28 +59,25 @@ class GroupInfo extends StatelessWidget {
                         ),
                       ],
                     ),
-                    BlocProvider<GroupStepsCubit>(
-                      create: (context) {
-                        logger.d('Creating and providing group steps cubit');
-                        return GroupStepsCubit();
-                      },
-                      child: GroupTodayStepsIndicator(
-                        dailyStepsGoal: state.dailyStepsGoal,
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: BlocProvider<GroupStepsCubit>.value(
+                        value: BlocProvider.of<GroupStepsCubit>(context),
+                        child: GroupTodayStepsIndicator(
+                          dailyStepsGoal: state.dailyStepsGoal,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                BlocProvider<GroupStepsCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing group steps cubit');
-                    return GroupStepsCubit();
-                  },
+                BlocProvider<GroupStepsCubit>.value(
+                  value: BlocProvider.of<GroupStepsCubit>(context),
                   child: GroupThisWeekStepsIndicator(
                     weeklyStepsGoal: state.weeklyStepsGoal,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: OutlinedButton(
                     onPressed: () =>
                         BlocProvider.of<MembershipCubit>(context).leaveGroup(),

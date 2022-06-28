@@ -12,4 +12,10 @@ class Observable {
   void removeObserver(Observer observer) {
     observers.remove(observer);
   }
+
+  void notifyObservers() {
+    for (var observer in observers) {
+      observer.update();
+    }
+  }
 }

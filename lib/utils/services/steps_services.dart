@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/app_config.dart';
 import 'package:mooover/utils/helpers/auth_interceptor.dart';
 import 'package:mooover/utils/helpers/logger.dart';
+import 'package:mooover/utils/helpers/operations.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// The services for the steps and pedestrian statuses.
-class StepsServices {
+class StepsServices extends Observable {
   static final _instance = StepsServices._();
 
   StepsServices._() {
@@ -108,17 +111,22 @@ class StepsServices {
         } else {
           final newStepsCount = _stepCount - lastStepsCount;
           logger.d("New steps count to post: $newStepsCount");
-          await _httpClient.post(
-              Uri.http(AppConfig().apiDomain,
-                  '${AppConfig().stepsServicesPath}/${UserSessionServices().getUserId()}'),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode({
-                'steps': newStepsCount,
-              }));
-          logger.d('Posted new steps: $newStepsCount');
-          await _secureStorage.write(
-              key: AppConfig().lastStepsCountKey, value: _stepCount.toString());
-          logger.d('Updated last steps count: $_stepCount');
+          try {
+            await _httpClient.post(
+                Uri.http(AppConfig().apiDomain,
+                    '${AppConfig().stepsServicesPath}/${UserSessionServices().getUserId()}'),
+                headers: {'Content-Type': 'application/json'},
+                body: jsonEncode({
+                  'steps': newStepsCount,
+                }));
+            logger.d('Posted new steps: $newStepsCount');
+            await _secureStorage.write(
+                key: AppConfig().lastStepsCountKey,
+                value: _stepCount.toString());
+            logger.d('Updated last steps count: $_stepCount');
+          } on HttpException catch (e) {
+            logger.e("Error posting steps: $newStepsCount", e);
+          }
         }
       } else {
         logger.d("No last steps count");
@@ -128,49 +136,63 @@ class StepsServices {
     } catch (error) {
       logger.e("Error updating steps: $error");
     }
+    notifyObservers();
     logger.i("Steps updated: $_stepCount");
   }
 
   void _updatePedestrianStatus() {
     logger.d("Updating pedestrian status");
     logger.i("Pedestrian status updated: $_pedestrianStatus");
+    notifyObservers();
   }
 
   Future<Map<String, int>> getUserSteps(String userId) async {
     logger.d("Getting user steps");
-    final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
-        '${AppConfig().userServicesPath}/$userId/steps')));
-    if (response.statusCode == 200) {
-      final todaySteps = json.decode(response.body)['today_steps'];
-      final thisWeekSteps = json.decode(response.body)['this_week_steps'];
-      logger.d("User steps: $todaySteps, $thisWeekSteps");
-      return {
-        'today_steps': todaySteps,
-        'this_week_steps': thisWeekSteps,
-      };
-    } else {
-      logger.e("Error getting user steps: ${response.body}");
-      throw Exception(
-          "Failed to get user steps: ${jsonDecode(response.body)['detail']}");
+    try {
+      final response = await (() => _httpClient.get(Uri.http(
+          AppConfig().apiDomain,
+          '${AppConfig().userServicesPath}/$userId/steps'))).withRetries(3);
+      if (response.statusCode == 200) {
+        final todaySteps = json.decode(response.body)['today_steps'];
+        final thisWeekSteps = json.decode(response.body)['this_week_steps'];
+        logger.d("User steps: $todaySteps, $thisWeekSteps");
+        return {
+          'today_steps': todaySteps,
+          'this_week_steps': thisWeekSteps,
+        };
+      } else {
+        logger.e("Error getting user steps: ${response.body}");
+        throw Exception(
+            "Failed to get user steps: ${jsonDecode(response.body)['detail']}");
+      }
+    } on HttpException catch (e) {
+      logger.e("Error getting user steps", e);
+      throw Exception("Error getting user steps: $e");
     }
   }
 
   Future<Map<String, int>> getGroupSteps(String groupId) async {
     logger.d("Getting group steps");
-    final response = (await _httpClient.get(Uri.http(AppConfig().apiDomain,
-        '${AppConfig().groupServicesPath}/$groupId/steps')));
-    if (response.statusCode == 200) {
-      final todaySteps = json.decode(response.body)['today_steps'];
-      final thisWeekSteps = json.decode(response.body)['this_week_steps'];
-      logger.d("Group steps: $todaySteps, $thisWeekSteps");
-      return {
-        'today_steps': todaySteps,
-        'this_week_steps': thisWeekSteps,
-      };
-    } else {
-      logger.e("Error getting group steps: ${response.body}");
-      throw Exception(
-          "Failed to get group steps: ${jsonDecode(response.body)['detail']}");
+    try {
+      final response = await (() => _httpClient.get(Uri.http(
+          AppConfig().apiDomain,
+          '${AppConfig().groupServicesPath}/$groupId/steps'))).withRetries(3);
+      if (response.statusCode == 200) {
+        final todaySteps = json.decode(response.body)['today_steps'];
+        final thisWeekSteps = json.decode(response.body)['this_week_steps'];
+        logger.d("Group steps: $todaySteps, $thisWeekSteps");
+        return {
+          'today_steps': todaySteps,
+          'this_week_steps': thisWeekSteps,
+        };
+      } else {
+        logger.e("Error getting group steps: ${response.body}");
+        throw Exception(
+            "Failed to get group steps: ${jsonDecode(response.body)['detail']}");
+      }
+    } on HttpException catch (e) {
+      logger.e("Error getting group steps", e);
+      throw Exception("Error getting group steps: $e");
     }
   }
 }

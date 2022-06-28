@@ -1,16 +1,29 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/domain/user.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class UserInfoCubit extends Cubit<UserInfoState> {
+class UserInfoCubit extends Cubit<UserInfoState> implements Observer {
   UserInfoCubit(
       {UserInfoState initialState =
           const UserInfoErrorState('No user info available')})
       : super(initialState) {
     loadUserInfo();
+    UserServices().addObserver(this);
+  }
+
+  @override
+  Future<void> close() {
+    UserServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadUserInfo();
   }
 
   /// This method is used to load the user info.
@@ -31,6 +44,29 @@ class UserInfoCubit extends Cubit<UserInfoState> {
         user.weeklyStepsGoal,
       ));
       logger.d('User info state loaded: $user');
+    } catch (e) {
+      emit(UserInfoErrorState(e.toString()));
+      logger.e('User info state error: $e');
+    }
+  }
+
+  /// This method is used to reload the user info.
+  Future<void> reloadUserInfo() async {
+    logger.d('User info state reloading');
+    try {
+      User user =
+      await UserServices().getUser(UserSessionServices().getUserId());
+      emit(UserInfoLoadedState(
+        user.name,
+        user.givenName,
+        user.familyName,
+        user.nickname,
+        user.email,
+        user.picture,
+        user.dailyStepsGoal,
+        user.weeklyStepsGoal,
+      ));
+      logger.d('User info state reloaded: $user');
     } catch (e) {
       emit(UserInfoErrorState(e.toString()));
       logger.e('User info state error: $e');

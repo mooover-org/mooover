@@ -1,15 +1,28 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/group_steps/group_steps_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/steps_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class GroupStepsCubit extends Cubit<GroupStepsState> {
+class GroupStepsCubit extends Cubit<GroupStepsState> implements Observer {
   GroupStepsCubit(
       {initialState = const GroupStepsErrorState('Group steps unavailable')})
       : super(initialState) {
     loadGroupSteps();
+    StepsServices().addObserver(this);
+  }
+
+  @override
+  Future<void> close() {
+    StepsServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadGroupSteps();
   }
 
   Future<void> loadGroupSteps() async {

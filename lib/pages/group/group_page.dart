@@ -26,11 +26,8 @@ class GroupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocProvider<MembershipCubit>(
-          create: (context) {
-            logger.d('Creating and providing membership cubit');
-            return MembershipCubit();
-          },
+        title: BlocProvider<MembershipCubit>.value(
+          value: BlocProvider.of<MembershipCubit>(context),
           child: const GroupPageTitle(),
         ),
         centerTitle: true,
@@ -42,18 +39,12 @@ class GroupPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocProvider<MembershipCubit>(
-        create: (context) {
-          logger.d('Creating and providing membership cubit');
-          return MembershipCubit();
-        },
+      body: BlocProvider<MembershipCubit>.value(
+        value: BlocProvider.of<MembershipCubit>(context),
         child: const GroupPageContents(),
       ),
-      floatingActionButton: BlocProvider<MembershipCubit>(
-        create: (context) {
-          logger.d('Creating and providing membership cubit');
-          return MembershipCubit();
-        },
+      floatingActionButton: BlocProvider<MembershipCubit>.value(
+        value: BlocProvider.of<MembershipCubit>(context),
         child: const GroupPageAddButton(),
       ),
     );

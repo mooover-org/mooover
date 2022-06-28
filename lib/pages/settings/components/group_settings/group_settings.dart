@@ -37,11 +37,8 @@ class GroupSettings extends StatelessWidget {
                   endIndent: 10,
                   thickness: 1,
                 ),
-                BlocProvider<GroupInfoCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing group info cubit');
-                    return GroupInfoCubit();
-                  },
+                BlocProvider<GroupInfoCubit>.value(
+                  value: BlocProvider.of<GroupInfoCubit>(context),
                   child: const GroupInfoFields(),
                 ),
               ],

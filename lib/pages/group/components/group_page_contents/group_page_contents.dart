@@ -25,11 +25,8 @@ class GroupPageContents extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              BlocProvider<GroupInfoCubit>(
-                create: (context) {
-                  logger.d('Creating and providing group info cubit');
-                  return GroupInfoCubit();
-                },
+              BlocProvider<GroupInfoCubit>.value(
+                value: BlocProvider.of<GroupInfoCubit>(context),
                 child: const GroupInfo(),
               ),
               Expanded(

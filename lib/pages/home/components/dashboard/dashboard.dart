@@ -27,22 +27,22 @@ class Dashboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                BlocProvider<UserStepsCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing user steps cubit');
-                    return UserStepsCubit();
-                  },
-                  child: UserTodayStepsIndicator(
-                    dailyStepsGoal: state.dailyStepsGoal,
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: BlocProvider<UserStepsCubit>.value(
+                    value: BlocProvider.of<UserStepsCubit>(context),
+                    child: UserTodayStepsIndicator(
+                      dailyStepsGoal: state.dailyStepsGoal,
+                    ),
                   ),
                 ),
-                BlocProvider<UserStepsCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing user steps cubit');
-                    return UserStepsCubit();
-                  },
-                  child: UserThisWeekStepsIndicator(
-                    weeklyStepsGoal: state.weeklyStepsGoal,
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: BlocProvider<UserStepsCubit>.value(
+                    value: BlocProvider.of<UserStepsCubit>(context),
+                    child: UserThisWeekStepsIndicator(
+                      weeklyStepsGoal: state.weeklyStepsGoal,
+                    ),
                   ),
                 ),
               ],

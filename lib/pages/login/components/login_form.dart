@@ -29,13 +29,16 @@ class LoginForm extends StatelessWidget {
               style: Theme.of(context).textTheme.caption,
             ),
           ),
-          OutlinedButton(
-              onPressed: () =>
-                  BlocProvider.of<UserSessionCubit>(context).login(),
-              child: const Text(
-                "Get started",
-                textAlign: TextAlign.center,
-              )),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: OutlinedButton(
+                onPressed: () =>
+                    BlocProvider.of<UserSessionCubit>(context).login(),
+                child: const Text(
+                  "Get started",
+                  textAlign: TextAlign.center,
+                )),
+          ),
         ],
       ),
     );

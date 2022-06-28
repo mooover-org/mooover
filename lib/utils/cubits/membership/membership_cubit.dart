@@ -1,16 +1,29 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/membership/membership_states.dart';
 import 'package:mooover/utils/domain/group.dart';
+import 'package:mooover/utils/domain/observer.dart';
 import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class MembershipCubit extends Cubit<MembershipState> {
+class MembershipCubit extends Cubit<MembershipState> implements Observer {
   MembershipCubit(
       {MembershipState initialState = const MembershipLoadingState()})
       : super(initialState) {
     loadMembership();
+    GroupServices().addObserver(this);
+  }
+
+  @override
+  Future<void> close() {
+    GroupServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadMembership();
   }
 
   Future<void> loadMembership() async {
@@ -27,6 +40,26 @@ class MembershipCubit extends Cubit<MembershipState> {
         emit(MembershipNoState(
             groups.map((Group group) => group.id).toList()));
         logger.d('Membership state loaded: no group');
+      }
+    } catch (e) {
+      emit(MembershipErrorState(e.toString()));
+      logger.e('Membership state error: $e');
+    }
+  }
+
+  Future<void> reloadMembership() async {
+    logger.d('Membership state reloading');
+    try {
+      final group = await UserServices()
+          .getGroupOfUser(UserSessionServices().getUserId());
+      if (group != null) {
+        emit(MembershipLoadedState(group.id));
+        logger.d('Membership state reloaded: ${group.id}');
+      } else {
+        final groups = await GroupServices().getGroups();
+        emit(MembershipNoState(
+            groups.map((Group group) => group.id).toList()));
+        logger.d('Membership state reloaded: no group');
       }
     } catch (e) {
       emit(MembershipErrorState(e.toString()));

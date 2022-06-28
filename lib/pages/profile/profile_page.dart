@@ -28,11 +28,8 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocProvider<UserInfoCubit>(
-        create: (context) {
-          logger.d('Creating and providing user info cubit');
-          return UserInfoCubit();
-        },
+      body: BlocProvider<UserInfoCubit>.value(
+        value: BlocProvider.of<UserInfoCubit>(context),
         child: const UserInfo(),
       ),
     );
