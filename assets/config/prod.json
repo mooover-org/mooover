@@ -1,6 +1,6 @@
 {
   "api": {
-    "domain": "192.168.1.8:8000",
+    "domain": "mooover.herokuapp.com",
     "userServicesPath": "/api/v1/users",
     "groupServicesPath": "/api/v1/groups",
     "stepsServicesPath": "/api/v1/steps"

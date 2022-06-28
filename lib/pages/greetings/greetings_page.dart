@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/app_theme/app_theme_cubit.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
+import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
@@ -26,6 +27,7 @@ class GreetingsPage extends StatelessWidget {
           await BlocProvider.of<GroupInfoCubit>(context).loadGroupInfo();
           await BlocProvider.of<UserStepsCubit>(context).loadUserSteps();
           await BlocProvider.of<GroupStepsCubit>(context).loadGroupSteps();
+          await BlocProvider.of<LeaderboardCubit>(context).loadLeaderboard();
           AutoRouter.of(context).pushNamed('/home');
         } else if (state is UserSessionNoState) {
           AutoRouter.of(context).popUntilRoot();

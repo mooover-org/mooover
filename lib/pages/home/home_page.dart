@@ -27,7 +27,10 @@ class HomePage extends StatelessWidget {
             Icons.group,
             size: 50,
           ),
-          onPressed: () => AutoRouter.of(context).pushNamed('/group'),
+          onPressed: () async => await AutoRouter.of(context)
+              .pushNamed('/group')
+              .then((value) => BlocProvider.of<LeaderboardCubit>(context)
+                  .loadLeaderboard()),
         ),
         actions: [
           BlocProvider<UserInfoCubit>.value(
@@ -47,11 +50,8 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: MultiBlocProvider(
               providers: [
-                BlocProvider<LeaderboardCubit>(
-                  create: (context) {
-                    logger.d('Creating and providing leaderboard cubit');
-                    return LeaderboardCubit();
-                  },
+                BlocProvider<LeaderboardCubit>.value(
+                  value: BlocProvider.of<LeaderboardCubit>(context),
                 ),
                 BlocProvider<MembershipCubit>.value(
                   value: BlocProvider.of<MembershipCubit>(context),

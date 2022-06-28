@@ -6,6 +6,7 @@ import 'package:mooover/config/routes/routing.gr.dart';
 import 'package:mooover/config/themes/themes.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
 import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
+import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
 import 'package:mooover/utils/cubits/user_session/user_session_cubit.dart';
@@ -50,6 +51,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => GroupInfoCubit()),
         BlocProvider(create: (context) => UserStepsCubit()),
         BlocProvider(create: (context) => GroupStepsCubit()),
+        BlocProvider(create: (context) => LeaderboardCubit()),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(
         bloc: _appThemeCubit,
