@@ -13,17 +13,32 @@ class LoginForm extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
-            "Welcome!\nWe are happy to have you here.",
-            textAlign: TextAlign.center,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Text(
+              "Welcome!",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
           ),
-          OutlinedButton(
-              onPressed: () =>
-                  BlocProvider.of<UserSessionCubit>(context).login(),
-              child: const Text(
-                "Get started",
-                textAlign: TextAlign.center,
-              )),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Text(
+              "We are happy to have you here.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.caption,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: OutlinedButton(
+                onPressed: () =>
+                    BlocProvider.of<UserSessionCubit>(context).login(),
+                child: const Text(
+                  "Get started",
+                  textAlign: TextAlign.center,
+                )),
+          ),
         ],
       ),
     );

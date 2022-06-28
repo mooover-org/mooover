@@ -1,150 +1,133 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_states.dart';
-import 'package:mooover/utils/domain/group.dart';
+import 'package:mooover/utils/domain/observer.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/group_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class GroupInfoCubit extends Cubit<GroupInfoState> {
+class GroupInfoCubit extends Cubit<GroupInfoState> implements Observer {
   GroupInfoCubit(
-      {GroupInfoState initialState = const GroupInfoNoState(<Group>[])})
-      : super(initialState);
+      {GroupInfoState initialState =
+          const GroupInfoErrorState('No group info available')})
+      : super(initialState) {
+    loadGroupInfo();
+    GroupServices().addObserver(this);
+  }
+
+  @override
+  Future<void> close() {
+    GroupServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadGroupInfo();
+  }
 
   /// This method is used to load the group info.
   Future<void> loadGroupInfo() async {
     emit(const GroupInfoLoadingState());
+    logger.d('Group info state loading');
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
-        log('Group info loaded');
+        emit(GroupInfoLoadedState(
+          group.nickname,
+          group.name,
+          group.dailyStepsGoal,
+          group.weeklyStepsGoal,
+        ));
+        logger.d('Group info state loaded: $group');
       } else {
-        List<Group> groups = await GroupServices().getGroups();
-        emit(GroupInfoNoState(groups));
-        log('Group list loaded');
+        emit(const GroupInfoErrorState('No group info available'));
+        logger.d('Group info state error: No group info available');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      logger.e('Group info state error: $e');
     }
   }
 
-  /// This method is used to remove the group info.
-  Future<void> removeGroupInfo() async {
-    emit(const GroupInfoLoadingState());
+  /// This method is used to reload the group info.
+  Future<void> reloadGroupInfo() async {
+    logger.d('Group info state reloading');
     try {
-      List<Group> groups = await GroupServices().getGroups();
-      emit(GroupInfoNoState(groups));
-      log('Group info removed');
+      final group = await UserServices()
+          .getGroupOfUser(UserSessionServices().getUserId());
+      if (group != null) {
+        emit(GroupInfoLoadedState(
+          group.nickname,
+          group.name,
+          group.dailyStepsGoal,
+          group.weeklyStepsGoal,
+        ));
+        logger.d('Group info state reloaded: $group');
+      } else {
+        emit(const GroupInfoErrorState('No group info available'));
+        logger.d('Group info state error: No group info available');
+      }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      logger.e('Group info state error: $e');
     }
   }
 
   /// This method is used to change the daily steps goal.
   Future<void> changeDailyStepsGoal(int newDailyStepsGoal) async {
     emit(const GroupInfoLoadingState());
+    logger.d('Group info state loading');
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
         group.dailyStepsGoal = newDailyStepsGoal;
         await GroupServices().updateGroup(group);
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
-        log('Group daily steps goal changed');
+        emit(GroupInfoLoadedState(
+          group.nickname,
+          group.name,
+          group.dailyStepsGoal,
+          group.weeklyStepsGoal,
+        ));
+        logger.d('Group daily steps goal state changed: $newDailyStepsGoal');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
+        logger.d(
+            'Group daily steps goal state error: The user is not part of any group');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
+      logger.e('Group daily steps goal state error: $e');
     }
   }
 
   /// This method is used to change the weekly steps goal.
   Future<void> changeWeeklyStepsGoal(int newWeeklyStepsGoal) async {
     emit(const GroupInfoLoadingState());
+    logger.d('Group info state loading');
     try {
       final group = await UserServices()
           .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
         group.weeklyStepsGoal = newWeeklyStepsGoal;
         await GroupServices().updateGroup(group);
-        final groups = await GroupServices().getGroups();
-        final members = await GroupServices().getMembersOfGroup(group.id);
-        emit(GroupInfoLoadedState(groups, group, members));
-        log('Group weekly steps goal changed');
+        emit(GroupInfoLoadedState(
+          group.nickname,
+          group.name,
+          group.dailyStepsGoal,
+          group.weeklyStepsGoal,
+        ));
+        logger.d('Group weekly steps goal state changed: $newWeeklyStepsGoal');
       } else {
         emit(const GroupInfoErrorState('The user is not part of any group'));
+        logger.d(
+            'Group weekly steps goal state error: The user is not part of any group');
       }
     } catch (e) {
       emit(GroupInfoErrorState(e.toString()));
-    }
-  }
-
-  /// This method is used to filter the groups by their nickname.
-  Future<void> filterGroups(String nickname) async {
-    emit(const GroupInfoLoadingState());
-    try {
-      final groups = await GroupServices().getGroups(nicknameFilter: nickname);
-      emit(GroupInfoNoState(groups));
-      log('Searched group loaded');
-    } catch (e) {
-      emit(GroupInfoErrorState(e.toString()));
-    }
-  }
-
-  /// This method is used to create a new group.
-  Future<void> createGroup(String nickname, String name) async {
-    emit(const GroupInfoLoadingState());
-    try {
-      await GroupServices()
-          .createGroup(UserSessionServices().getUserId(), nickname, name);
-      final group = await UserServices()
-          .getGroupOfUser(UserSessionServices().getUserId());
-      final groups = await GroupServices().getGroups();
-      final members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(groups, group, members));
-      log('Group created');
-    } catch (e) {
-      emit(GroupInfoErrorState(e.toString()));
-    }
-  }
-
-  /// This method is used to join a group.
-  Future<void> joinGroup(String nickname) async {
-    emit(const GroupInfoLoadingState());
-    try {
-      await GroupServices()
-          .addMemberToGroup(UserSessionServices().getUserId(), nickname);
-      final group = await UserServices()
-          .getGroupOfUser(UserSessionServices().getUserId());
-      final groups = await GroupServices().getGroups();
-      final members = await GroupServices().getMembersOfGroup(group!.id);
-      emit(GroupInfoLoadedState(groups, group, members));
-      log('Group joined');
-    } catch (e) {
-      emit(GroupInfoErrorState(e.toString()));
-    }
-  }
-
-  Future<void> leaveGroup() async {
-    emit(const GroupInfoLoadingState());
-    try {
-      final group = await UserServices()
-          .getGroupOfUser(UserSessionServices().getUserId());
-      await GroupServices()
-          .removeMemberFromGroup(UserSessionServices().getUserId(), group!.id);
-      final groups = await GroupServices().getGroups();
-      emit(GroupInfoNoState(groups));
-      log('Group left');
-    } catch (e) {
-      emit(GroupInfoErrorState(e.toString()));
+      logger.e('Group weekly steps goal state error: $e');
     }
   }
 }

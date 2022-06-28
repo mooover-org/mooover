@@ -1,58 +1,55 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/user_steps/user_steps_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
+import 'package:mooover/utils/helpers/logger.dart';
 import 'package:mooover/utils/services/steps_services.dart';
-import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class UserStepsCubit extends Cubit<UserStepsState> {
+class UserStepsCubit extends Cubit<UserStepsState> implements Observer {
   UserStepsCubit(
-      {UserStepsState initialState = const UserStepsNoState()})
-      : super(initialState);
+      {initialState = const UserStepsErrorState('User steps unavailable')})
+      : super(initialState) {
+    loadUserSteps();
+    StepsServices().addObserver(this);
+  }
 
-  /// This method is used to load the steps info.
-  Future<void> loadStepsData() async {
+  @override
+  Future<void> close() {
+    StepsServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadUserSteps();
+  }
+
+  Future<void> loadUserSteps() async {
     emit(const UserStepsLoadingState());
+    logger.d('User steps state loading');
     try {
-      final user =
-          await UserServices().getUser(UserSessionServices().getUserId());
-      String pedestrianStatus = StepsServices().getPedestrianStatus();
-      emit(UserStepsLoadedState(user.todaySteps, user.dailyStepsGoal,
-          user.thisWeekSteps, user.weeklyStepsGoal, pedestrianStatus));
-      log('Steps info loaded');
+      final userSteps =
+          await StepsServices().getUserSteps(UserSessionServices().getUserId());
+      emit(UserStepsLoadedState(userSteps['today_steps'] as int,
+          userSteps['this_week_steps'] as int));
+      logger.d('User steps state loaded: $userSteps');
     } catch (e) {
       emit(UserStepsErrorState(e.toString()));
+      logger.e('User steps state error: $e');
     }
   }
 
-  /// This method is used to hot reload the steps info.
-  Future<void> hotReloadStepsData() async {
-    if (state is! UserStepsLoadedState) {
-      emit(const UserStepsErrorState(
-          'Trying to hot reload steps info when it is not loaded'));
-      return;
-    }
+  Future<void> reloadUserSteps() async {
+    logger.d('User steps state reloading');
     try {
-      final user =
-          await UserServices().getUser(UserSessionServices().getUserId());
-      String pedestrianStatus = StepsServices().getPedestrianStatus();
-      emit(UserStepsLoadedState(user.todaySteps, user.dailyStepsGoal,
-          user.thisWeekSteps, user.weeklyStepsGoal, pedestrianStatus));
-      log('Steps info reloaded');
+      final userSteps =
+          await StepsServices().getUserSteps(UserSessionServices().getUserId());
+      emit(UserStepsLoadedState(userSteps['today_steps'] as int,
+          userSteps['this_week_steps'] as int));
+      logger.d('User steps state reloaded: $userSteps');
     } catch (e) {
       emit(UserStepsErrorState(e.toString()));
-    }
-  }
-
-  /// This method is used to remove the steps info.
-  Future<void> removeStepsData() async {
-    emit(const UserStepsLoadingState());
-    try {
-      emit(const UserStepsNoState());
-      log('Steps info removed');
-    } catch (e) {
-      emit(UserStepsErrorState(e.toString()));
+      logger.e('User steps state error: $e');
     }
   }
 }

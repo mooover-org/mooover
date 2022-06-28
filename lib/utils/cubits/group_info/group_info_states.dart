@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:mooover/utils/cubits/group_info/group_info_cubit.dart';
-import 'package:mooover/utils/domain/group.dart';
 import 'package:mooover/utils/domain/user.dart';
 
 /// The base state of the [GroupInfoCubit]
@@ -16,34 +15,36 @@ abstract class GroupInfoState extends Equatable {
 /// The loading state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadingState extends GroupInfoState {
-  const GroupInfoLoadingState();
+  final String message;
+
+  const GroupInfoLoadingState({this.message = ''});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 /// The loaded state of the [GroupInfoCubit]
 @immutable
 class GroupInfoLoadedState extends GroupInfoState {
-  final List<Group> groups;
-  final Group group;
-  final List<User> members;
+  final String nickname;
+  final String name;
+  final int dailyStepsGoal;
+  final int weeklyStepsGoal;
 
-  const GroupInfoLoadedState(this.groups, this.group, this.members);
-
-  @override
-  List<Object> get props => [groups, group, members];
-}
-
-/// The no state of the [GroupInfoCubit]
-@immutable
-class GroupInfoNoState extends GroupInfoState {
-  final List<Group> groups;
-
-  const GroupInfoNoState(this.groups);
+  const GroupInfoLoadedState(
+    this.nickname,
+    this.name,
+    this.dailyStepsGoal,
+    this.weeklyStepsGoal,
+  );
 
   @override
-  List<Object> get props => [groups];
+  List<Object> get props => [
+        nickname,
+        name,
+        dailyStepsGoal,
+        weeklyStepsGoal,
+      ];
 }
 
 /// The error state of the [GroupInfoCubit]

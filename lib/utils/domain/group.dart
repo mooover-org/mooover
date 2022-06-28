@@ -6,7 +6,7 @@ class Group {
   int thisWeekSteps;
   int weeklyStepsGoal;
 
-  get id => nickname;
+  String get id => nickname;
 
   Group(this.nickname, this.name, this.todaySteps, this.dailyStepsGoal,
       this.thisWeekSteps, this.weeklyStepsGoal);

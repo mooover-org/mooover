@@ -1,9 +1,9 @@
 {
   "api": {
-    "baseUrl": "http://192.168.1.8:8000/api/v1",
-    "userServicesUrl": "http://192.168.1.8:8000/api/v1/users",
-    "groupServicesUrl": "http://192.168.1.8:8000/api/v1/groups",
-    "stepsServicesUrl": "http://192.168.1.8:8000/api/v1/steps"
+    "domain": "mooover.herokuapp.com",
+    "userServicesPath": "/api/v1/users",
+    "groupServicesPath": "/api/v1/groups",
+    "stepsServicesPath": "/api/v1/steps"
   },
   "auth0": {
     "domain": "dev-ed4pmqgq.eu.auth0.com",

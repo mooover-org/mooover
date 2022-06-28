@@ -1,62 +1,68 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mooover/utils/cubits/group_steps/group_steps_states.dart';
+import 'package:mooover/utils/domain/observer.dart';
+import 'package:mooover/utils/helpers/logger.dart';
+import 'package:mooover/utils/services/steps_services.dart';
 import 'package:mooover/utils/services/user_services.dart';
 import 'package:mooover/utils/services/user_session_services.dart';
 
-class GroupStepsCubit extends Cubit<GroupStepsState> {
-  GroupStepsCubit({GroupStepsState initialState = const GroupStepsNoState()})
-      : super(initialState);
+class GroupStepsCubit extends Cubit<GroupStepsState> implements Observer {
+  GroupStepsCubit(
+      {initialState = const GroupStepsErrorState('Group steps unavailable')})
+      : super(initialState) {
+    loadGroupSteps();
+    StepsServices().addObserver(this);
+  }
 
-  /// This method is used to load the steps info.
-  Future<void> loadStepsData() async {
+  @override
+  Future<void> close() {
+    StepsServices().removeObserver(this);
+    return super.close();
+  }
+
+  @override
+  void update() {
+    reloadGroupSteps();
+  }
+
+  Future<void> loadGroupSteps() async {
     emit(const GroupStepsLoadingState());
+    logger.d('Group steps state loading');
     try {
-      final group =
-          await UserServices().getGroupOfUser(UserSessionServices().getUserId());
+      final group = await UserServices()
+          .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
-        emit(GroupStepsLoadedState(group.todaySteps, group.dailyStepsGoal,
-            group.thisWeekSteps, group.weeklyStepsGoal));
-        log('Steps info loaded');
+        final groupSteps = await StepsServices().getGroupSteps(group.id);
+        emit(GroupStepsLoadedState(groupSteps['today_steps'] as int,
+            groupSteps['this_week_steps'] as int));
+        logger.d('Group steps state loaded: $groupSteps');
       } else {
-        emit(const GroupStepsNoState());
+        emit(const GroupStepsErrorState('Group steps unavailable'));
+        logger.e('Group steps state error: Group steps unavailable');
       }
     } catch (e) {
       emit(GroupStepsErrorState(e.toString()));
+      logger.e('Group steps state error: $e');
     }
   }
 
-  /// This method is used to hot reload the steps info.
-  Future<void> hotReloadStepsData() async {
-    if (state is! GroupStepsLoadedState) {
-      emit(const GroupStepsErrorState(
-          'Trying to hot reload steps info when it is not loaded'));
-      return;
-    }
+  Future<void> reloadGroupSteps() async {
+    logger.d('Group steps state reloading');
     try {
-      final group =
-          await UserServices().getGroupOfUser(UserSessionServices().getUserId());
+      final group = await UserServices()
+          .getGroupOfUser(UserSessionServices().getUserId());
       if (group != null) {
-        emit(GroupStepsLoadedState(group.todaySteps, group.dailyStepsGoal,
-            group.thisWeekSteps, group.weeklyStepsGoal));
-        log('Steps info hot reloaded');
+        final groupSteps = await StepsServices().getGroupSteps(group.id);
+        emit(GroupStepsLoadedState(groupSteps['today_steps'] as int,
+            groupSteps['this_week_steps'] as int));
+        logger.d('Group steps state reloaded: $groupSteps');
       } else {
-        emit(const GroupStepsNoState());
+        emit(const GroupStepsErrorState('Group steps unavailable'));
+        logger.e('Group steps state error: Group steps unavailable');
       }
     } catch (e) {
       emit(GroupStepsErrorState(e.toString()));
-    }
-  }
-
-  /// This method is used to remove the steps info.
-  Future<void> removeStepsData() async {
-    emit(const GroupStepsLoadingState());
-    try {
-      emit(const GroupStepsNoState());
-      log('Steps info removed');
-    } catch (e) {
-      emit(GroupStepsErrorState(e.toString()));
+      logger.e('Group steps state error: $e');
     }
   }
 }

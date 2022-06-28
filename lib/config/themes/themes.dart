@@ -1,5 +1,42 @@
 import 'package:flutter/material.dart';
 
+const Map<String, Color> _kPalette = {
+  'primary': Color(0xff880e4f),
+  'primaryLight': Color(0xffbc477b),
+  'primaryDark': Color(0xff560027),
+  'backgroundLight': Color(0xffeeeeee),
+  'backgroundDark': Color(0xff212121),
+  'surfaceLight': Color(0xfffafafa),
+  'surfaceDark': Color(0xff363636),
+  'onPrimary': Color(0xfffafafa),
+  'onPrimaryLight': Color(0xfffafafa),
+  'onPrimaryDark': Color(0xfffafafa),
+  'onBackgroundLight': Color(0xff090909),
+  'onBackgroundDark': Color(0xfffafafa),
+  'onSurfaceLight': Color(0xff090909),
+  'onSurfaceDark': Color(0xfffafafa),
+  'shadowLight': Color(0xff000000),
+  'shadowDark': Color(0xff000000),
+};
+
+const Map<String, EdgeInsets> _kPadding = {
+  'small': EdgeInsets.all(5),
+  'medium': EdgeInsets.all(10),
+  'large': EdgeInsets.all(15),
+};
+
+Map<String, BorderRadius> _kRadius = {
+  'small': BorderRadius.circular(5),
+  'medium': BorderRadius.circular(10),
+  'large': BorderRadius.circular(15),
+};
+
+const _kElevation = {
+  'small': 3.0,
+  'medium': 6.0,
+  'large': 12.0,
+};
+
 /// Converts an app theme to a string
 String appThemeToString(AppTheme appTheme) {
   switch (appTheme) {
@@ -34,77 +71,102 @@ enum AppTheme {
 final appThemes = {
   AppTheme.light: ThemeData(
     brightness: Brightness.light,
-    primaryColor: Colors.deepPurpleAccent,
-    appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurpleAccent),
-    scaffoldBackgroundColor: Colors.grey[100],
-    backgroundColor: Colors.grey[100],
+    primaryColor: _kPalette['primary'],
+    accentColor: _kPalette['primaryLight'],
+    appBarTheme: AppBarTheme(backgroundColor: _kPalette['primary']),
+    scaffoldBackgroundColor: _kPalette['backgroundLight'],
+    backgroundColor: _kPalette['backgroundLight'],
     cardTheme: CardTheme(
-      color: Colors.white,
-      shadowColor: Colors.black,
-      margin: const EdgeInsets.all(10),
+      color: _kPalette['surfaceLight'],
+      shadowColor: _kPalette['shadowLight'],
+      margin: _kPadding['medium'],
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: _kRadius['medium'] as BorderRadiusGeometry,
       ),
-      elevation: 3,
+      elevation: _kElevation['medium'],
     ),
-    buttonTheme: const ButtonThemeData(
-      buttonColor: Colors.deepPurpleAccent,
+    buttonTheme: ButtonThemeData(
+      buttonColor: _kPalette['primary'],
       textTheme: ButtonTextTheme.primary,
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        primary: Colors.black,
+        primary: _kPalette['onSurfaceLight'],
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        primary: Colors.white,
-        backgroundColor: Colors.deepPurpleAccent,
+        primary: _kPalette['onPrimary'],
+        backgroundColor: _kPalette['primary'],
       ),
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Colors.deepPurpleAccent,
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: _kPalette['primary'],
     ),
-    iconTheme: const IconThemeData(color: Colors.white),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Colors.deepPurpleAccent,
+    iconTheme: IconThemeData(color: _kPalette['onPrimary']),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: _kPalette['primary'],
+    ),
+    colorScheme: ColorScheme.light(
+      primary: _kPalette['primary']!,
+      primaryVariant: _kPalette['primaryLight'],
+      secondary: _kPalette['primaryDark']!,
+      secondaryVariant: _kPalette['primaryDark'],
+      surface: _kPalette['surfaceLight']!,
+      background: _kPalette['backgroundLight']!,
+      error: _kPalette['primaryDark']!,
+      onPrimary: _kPalette['onPrimary']!,
+      onSecondary: _kPalette['onPrimary']!,
     ),
   ),
   AppTheme.dark: ThemeData(
     brightness: Brightness.dark,
-    primaryColor: Colors.deepPurple,
-    appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurple),
-    scaffoldBackgroundColor: Colors.grey[900],
-    backgroundColor: Colors.grey[900],
+    primaryColor: _kPalette['primaryLight'],
+    accentColor: _kPalette['primaryLight'],
+    appBarTheme: AppBarTheme(backgroundColor: _kPalette['primaryLight']),
+    scaffoldBackgroundColor: _kPalette['backgroundDark'],
+    backgroundColor: _kPalette['backgroundDark'],
     cardTheme: CardTheme(
-      color: Colors.grey[850],
-      shadowColor: Colors.black,
-      margin: const EdgeInsets.all(10),
+      color: _kPalette['surfaceDark'],
+      shadowColor: _kPalette['shadowDark'],
+      margin: _kPadding['medium'],
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: _kRadius['medium'] as BorderRadiusGeometry,
       ),
-      elevation: 3,
+      elevation: _kElevation['medium'],
     ),
-    buttonTheme: const ButtonThemeData(
-      buttonColor: Colors.deepPurple,
+    buttonTheme: ButtonThemeData(
+      buttonColor: _kPalette['primaryLight'],
       textTheme: ButtonTextTheme.primary,
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        primary: Colors.white,
+        primary: _kPalette['onPrimaryDark'],
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        primary: Colors.white,
+        primary: _kPalette['onPrimaryDark'],
+        backgroundColor: _kPalette['primaryLight'],
       ),
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: Colors.deepPurple,
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: _kPalette['primaryLight'],
     ),
-    iconTheme: const IconThemeData(color: Colors.white),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Colors.deepPurple,
+    iconTheme: IconThemeData(color: _kPalette['onPrimaryDark']),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: _kPalette['primaryLight'],
+    ),
+    colorScheme: ColorScheme.dark(
+      primary: _kPalette['primaryLight']!,
+      primaryVariant: _kPalette['primaryLight'],
+      secondary: _kPalette['primaryLight']!,
+      secondaryVariant: _kPalette['primaryLight'],
+      surface: _kPalette['surfaceDark']!,
+      background: _kPalette['backgroundDark']!,
+      error: _kPalette['primaryLight']!,
+      onPrimary: _kPalette['onPrimaryDark']!,
+      onSecondary: _kPalette['onPrimary']!,
     ),
   ),
 };

@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
-import 'package:mooover/utils/domain/user.dart';
 
 /// The base state of the [UserInfoCubit]
 @immutable
@@ -15,30 +14,48 @@ abstract class UserInfoState extends Equatable {
 /// The loading state of the [UserInfoCubit]
 @immutable
 class UserInfoLoadingState extends UserInfoState {
-  const UserInfoLoadingState();
+  final String message;
+
+  const UserInfoLoadingState({this.message = ''});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 /// The loaded state of the [UserInfoCubit]
 @immutable
 class UserInfoLoadedState extends UserInfoState {
-  final User user;
+  final String name;
+  final String givenName;
+  final String familyName;
+  final String nickname;
+  final String email;
+  final String picture;
+  final int dailyStepsGoal;
+  final int weeklyStepsGoal;
 
-  const UserInfoLoadedState(this.user);
+  const UserInfoLoadedState(
+    this.name,
+    this.givenName,
+    this.familyName,
+    this.nickname,
+    this.email,
+    this.picture,
+    this.dailyStepsGoal,
+    this.weeklyStepsGoal,
+  );
 
   @override
-  List<Object> get props => [user];
-}
-
-/// The no state of the [UserInfoCubit]
-@immutable
-class UserInfoNoState extends UserInfoState {
-  const UserInfoNoState();
-
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        name,
+        givenName,
+        familyName,
+        nickname,
+        email,
+        picture,
+        dailyStepsGoal,
+        weeklyStepsGoal,
+      ];
 }
 
 /// The error state of the [UserInfoCubit]

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:mooover/utils/cubits/user_steps/user_steps_cubit.dart';
 
-/// The base state of the [UserStepsCubit]
 @immutable
 abstract class UserStepsState extends Equatable {
   const UserStepsState();
@@ -11,47 +9,27 @@ abstract class UserStepsState extends Equatable {
   List<Object> get props => [];
 }
 
-/// The loading state of the [UserStepsCubit]
 @immutable
 class UserStepsLoadingState extends UserStepsState {
-  const UserStepsLoadingState();
+  final String message;
+
+  const UserStepsLoadingState({this.message = ''});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
-/// The loaded state of the [UserStepsCubit]
 @immutable
 class UserStepsLoadedState extends UserStepsState {
   final int todaySteps;
-  final int dailyStepsGoal;
   final int thisWeekSteps;
-  final int weeklyStepsGoal;
-  final String pedestrianStatus;
 
-  const UserStepsLoadedState(this.todaySteps, this.dailyStepsGoal,
-      this.thisWeekSteps, this.weeklyStepsGoal, this.pedestrianStatus);
+  const UserStepsLoadedState(this.todaySteps, this.thisWeekSteps);
 
   @override
-  List<Object> get props => [
-        todaySteps,
-        dailyStepsGoal,
-        thisWeekSteps,
-        weeklyStepsGoal,
-        pedestrianStatus
-      ];
+  List<Object> get props => [todaySteps, thisWeekSteps];
 }
 
-/// The no state of the [UserStepsCubit]
-@immutable
-class UserStepsNoState extends UserStepsState {
-  const UserStepsNoState();
-
-  @override
-  List<Object> get props => [];
-}
-
-/// The error state of the [UserStepsCubit]
 @immutable
 class UserStepsErrorState extends UserStepsState {
   final String message;
