@@ -17,28 +17,34 @@ class Leaderboard extends StatelessWidget {
     return BlocBuilder<LeaderboardCubit, LeaderboardState>(
       builder: (context, state) {
         if (state is LeaderboardLoadedState) {
-          return ListView.builder(
-            itemCount: state.groups.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Leaderboard',
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              } else {
-                final leaderboardEntry = state.groups[index - 1];
-                return LeaderboardListTile(
-                  id: leaderboardEntry.id,
-                  name: leaderboardEntry.name,
-                  nickname: leaderboardEntry.nickname,
-                  thisWeekSteps: leaderboardEntry.thisWeekSteps,
-                );
-              }
-            },
-          );
+          if (state.groups.isEmpty) {
+            return const Center(
+              child: Text('No groups to available'),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: state.groups.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Leaderboard',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                } else {
+                  final leaderboardEntry = state.groups[index - 1];
+                  return LeaderboardListTile(
+                    id: leaderboardEntry.id,
+                    name: leaderboardEntry.name,
+                    nickname: leaderboardEntry.nickname,
+                    thisWeekSteps: leaderboardEntry.thisWeekSteps,
+                  );
+                }
+              },
+            );
+          }
         } else if (state is LeaderboardLoadingState) {
           return const LoadingDisplay();
         } else if (state is LeaderboardErrorState) {

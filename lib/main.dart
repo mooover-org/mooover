@@ -50,7 +50,6 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => MembershipCubit()),
         BlocProvider(create: (context) => GroupInfoCubit()),
         BlocProvider(create: (context) => UserStepsCubit()),
-        BlocProvider(create: (context) => GroupStepsCubit()),
         BlocProvider(create: (context) => LeaderboardCubit()),
       ],
       child: BlocBuilder<AppThemeCubit, AppThemeState>(

@@ -30,13 +30,8 @@ class LeaderboardCubit extends Cubit<LeaderboardState> implements Observer {
     try {
       List<Group> groups =
           await GroupServices().getGroups(orderedBySteps: true);
-      if (groups.isEmpty) {
-        emit(const LeaderboardErrorState('No groups to show'));
-        logger.d('Leaderboard state loaded: No groups to show');
-      } else {
-        emit(LeaderboardLoadedState(groups));
-        logger.d('Leaderboard state loaded: $groups');
-      }
+      emit(LeaderboardLoadedState(groups));
+      logger.d('Leaderboard state loaded: $groups');
     } catch (e) {
       emit(LeaderboardErrorState(e.toString()));
       logger.e('Leaderboard state error: $e');
@@ -48,14 +43,9 @@ class LeaderboardCubit extends Cubit<LeaderboardState> implements Observer {
     logger.d('Leaderboard state reloading');
     try {
       List<Group> groups =
-      await GroupServices().getGroups(orderedBySteps: true);
-      if (groups.isEmpty) {
-        emit(const LeaderboardErrorState('No groups to show'));
-        logger.d('Leaderboard state reloaded: No groups to show');
-      } else {
-        emit(LeaderboardLoadedState(groups));
-        logger.d('Leaderboard state reloaded: $groups');
-      }
+          await GroupServices().getGroups(orderedBySteps: true);
+      emit(LeaderboardLoadedState(groups));
+      logger.d('Leaderboard state reloaded: $groups');
     } catch (e) {
       emit(LeaderboardErrorState(e.toString()));
       logger.e('Leaderboard state error: $e');

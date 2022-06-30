@@ -26,7 +26,6 @@ class GreetingsPage extends StatelessWidget {
           await BlocProvider.of<MembershipCubit>(context).loadMembership();
           await BlocProvider.of<GroupInfoCubit>(context).loadGroupInfo();
           await BlocProvider.of<UserStepsCubit>(context).loadUserSteps();
-          await BlocProvider.of<GroupStepsCubit>(context).loadGroupSteps();
           await BlocProvider.of<LeaderboardCubit>(context).loadLeaderboard();
           AutoRouter.of(context).pushNamed('/home');
         } else if (state is UserSessionNoState) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mooover/utils/cubits/group_steps/group_steps_cubit.dart';
 import 'package:mooover/utils/cubits/groups/groups_cubit.dart';
 import 'package:mooover/utils/cubits/groups/groups_states.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
@@ -34,12 +33,8 @@ class GroupsList extends StatelessWidget {
                       size: 50,
                     ),
                     trailing: TextButton(
-                      onPressed: () async {
-                        await BlocProvider.of<MembershipCubit>(context)
-                            .joinGroup(group.id);
-                        await BlocProvider.of<GroupStepsCubit>(context)
-                            .loadGroupSteps();
-                      },
+                      onPressed: () => BlocProvider.of<MembershipCubit>(context)
+                          .joinGroup(group.id),
                       child: const Text('Join'),
                     ),
                   ),

@@ -7,7 +7,6 @@ import 'package:mooover/pages/home/components/profile_button.dart';
 import 'package:mooover/utils/cubits/leaderboard/leaderboard_cubit.dart';
 import 'package:mooover/utils/cubits/membership/membership_cubit.dart';
 import 'package:mooover/utils/cubits/user_info/user_info_cubit.dart';
-import 'package:mooover/utils/helpers/logger.dart';
 
 /// The home page.
 ///
