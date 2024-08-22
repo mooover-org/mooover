@@ -10,6 +10,7 @@ class AppConfig {
   String bundleIdentifier = "usr.adipopbv.mooover";
   AppTheme initialAppTheme = AppTheme.light;
   String apiDomain = "localhost:8000";
+  String basePath = "/api/v1";
   String userServicesPath = "/api/v1/users";
   String groupServicesPath = "/api/v1/groups";
   String stepsServicesPath = "/api/v1/steps";
@@ -51,6 +52,7 @@ class AppConfig {
     _instance.initialAppTheme =
         appThemeFromString(json["app"]["initialAppTheme"]);
     _instance.apiDomain = json["api"]["domain"];
+    _instance.basePath = json["api"]["basePath"];
     _instance.userServicesPath = json["api"]["userServicesPath"];
     _instance.groupServicesPath = json["api"]["groupServicesPath"];
     _instance.stepsServicesPath = json["api"]["stepsServicesPath"];
